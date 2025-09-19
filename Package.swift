@@ -8,9 +8,9 @@ let package = Package(
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "ExtrinsicPackage",
+            name: "ExtrinsicService",
             targets: [
-                "ExtrinsicPackage",
+                "ExtrinsicService",
             ]),
     ],
     dependencies: [
@@ -20,7 +20,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "ExtrinsicPackage",
+            name: "ExtrinsicService",
             dependencies: [
                 .product(name: "SubstrateSdk", package: "substrate-sdk-ios"),
                 .product(name: "MetadataShortenerApi", package: "metadata-shortener-ios"),
@@ -29,9 +29,9 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "ExtrinsicPackageTests",
+            name: "ExtrinsicServiceTests",
             dependencies: [
-                "ExtrinsicPackage"
+                "ExtrinsicService"
             ]
         ),
         .target(
