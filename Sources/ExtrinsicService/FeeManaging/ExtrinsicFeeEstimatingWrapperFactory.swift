@@ -1,0 +1,67 @@
+import Operation_iOS
+import SubstrateSdk
+import CommonMissing
+
+public protocol ExtrinsicFeeEstimatingWrapperFactoryProtocol {
+    func createNativeFeeEstimatingWrapper(
+        extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
+    ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
+
+    func createCustomFeeEstimatingWrapper(
+        asset: AssetModel,
+        extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
+    ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
+}
+
+public final class ExtrinsicFeeEstimatingWrapperFactory: ExtrinsicFeeEstimatingWrapperFactoryProtocol {
+    let host: ExtrinsicFeeEstimatorHostProtocol
+    let customFeeEstimatorFactory: ExtrinsicCustomFeeEstimatingFactoryProtocol
+
+    init(
+        host: ExtrinsicFeeEstimatorHostProtocol,
+        customFeeEstimatorFactory: ExtrinsicCustomFeeEstimatingFactoryProtocol
+    ) {
+        self.host = host
+        self.customFeeEstimatorFactory = customFeeEstimatorFactory
+    }
+
+    public func createNativeFeeEstimatingWrapper(
+        extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
+    ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
+        ExtrinsicNativeFeeEstimator(
+            chain: host.chain,
+            operationQueue: host.operationQueue
+        ).createFeeEstimatingWrapper(
+            connection: host.connection,
+            runtimeService: host.runtimeProvider,
+            extrinsicCreatingResultClosure: extrinsicCreatingResultClosure
+        )
+    }
+
+    public func createCustomFeeEstimatingWrapper(
+        asset: AssetModel,
+        extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
+    ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
+        let chainAsset = ChainAssetImpl(chain: host.chain, asset: asset)
+
+        guard
+            let customFeeEstimator = customFeeEstimatorFactory.createCustomFeeEstimator(
+                for: chainAsset
+            ) else {
+            return .createWithError(
+                ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(chainAsset.chainAssetId)
+            )
+        }
+
+        return customFeeEstimator.createFeeEstimatingWrapper(
+            connection: host.connection,
+            runtimeService: host.runtimeProvider,
+            extrinsicCreatingResultClosure: extrinsicCreatingResultClosure
+        )
+    }
+}
+
+struct ChainAssetImpl: ChainAsset {
+    let chain: ChainModel
+    let asset: AssetModel
+}
