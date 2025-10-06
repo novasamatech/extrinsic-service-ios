@@ -17,13 +17,7 @@ public struct ExtrinsicFeePayer: Equatable {
     }
 
     init?(senderResolution: ExtrinsicSenderResolution) {
-        switch senderResolution {
-        case let .delegate(resolvedDelegate):
-            accountId = resolvedDelegate.delegateAccount?.chainAccount.accountId
-            reason = .delegate
-        case .current:
-            return nil
-        }
+        return nil
     }
 }
 

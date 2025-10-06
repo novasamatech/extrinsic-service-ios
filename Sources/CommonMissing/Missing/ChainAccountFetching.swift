@@ -54,7 +54,6 @@ public struct MetaChainAccountResponse {
     public let substrateAccountId: AccountId?
     public let ethereumAccountId: AccountId?
     public let walletIdenticonData: Data?
-    public let delegationId: DelegateIdentifier?
     public let chainAccount: ChainAccountResponse
 }
 
@@ -203,7 +202,6 @@ extension MetaAccountModel {
                 substrateAccountId: substrateAccountId,
                 ethereumAccountId: ethereumAddress,
                 walletIdenticonData: walletIdenticonData(),
-                delegationId: getDelegateIdentifier(),
                 chainAccount: $0
             )
         }

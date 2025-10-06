@@ -4,6 +4,7 @@ import SubstrateSdk
 import CommonMissing
 
 enum ExtrinsicBuilderExtensionError: Error {
+    case invalidResolvedAccount
     case invalidRawSignature(data: Data)
 }
 
@@ -13,7 +14,9 @@ extension ExtrinsicBuilderProtocol {
         context: ExtrinsicSigningContext.Substrate,
         codingFactory: RuntimeCoderFactoryProtocol
     ) throws -> Self {
-        let account = context.senderResolution.account
+        guard let account = context.senderResolution.account else {
+            throw ExtrinsicBuilderExtensionError.invalidResolvedAccount
+        }
 
         return switch account.chainFormat {
         case .ethereum:

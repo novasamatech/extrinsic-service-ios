@@ -27,7 +27,7 @@ public enum ExtrinsicSigningContext {
     public var substrateCryptoType: MultiassetCryptoType? {
         switch self {
         case let .substrateExtrinsic(substrate):
-            return substrate.senderResolution.account.cryptoType
+            return substrate.senderResolution.account?.cryptoType
         case .evmTransaction, .rawBytes:
             return nil
         }

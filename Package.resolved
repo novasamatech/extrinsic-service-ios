@@ -1,5 +1,5 @@
 {
-  "originHash" : "0e6287b984ba299ebb5ea09ed9cef81b68db87a277d895929b84f9305e6c5c1b",
+  "originHash" : "e3cfbb08de69e58af659a5419e6ac75253ac3b11a7d17b3460e10624e2a188e8",
   "pins" : [
     {
       "identity" : "bigint",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/Crypto-iOS",
       "state" : {
-        "revision" : "adcf12d8244ea6425ee803fd725aee0a342f64f9",
-        "version" : "0.2.0"
+        "revision" : "648ed379cc7175479146655dda83e09dba87e0b0",
+        "version" : "0.3.0"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/Operation-iOS",
       "state" : {
-        "revision" : "fd512cd2186bd4047ff7f326c13df6aa5e3c3557",
-        "version" : "2.1.1"
+        "revision" : "84569876d92942113a7f2b352e69d2ec186d8060",
+        "version" : "2.2.0"
       }
     },
     {
@@ -80,15 +80,6 @@
       "state" : {
         "revision" : "21d1dc412cfecbe6e34f1f4c4eb88d3f912654a6",
         "version" : "5.2.4"
-      }
-    },
-    {
-      "identity" : "scrypt.c",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/v57/scrypt.c",
-      "state" : {
-        "revision" : "0a1ac944808cd667a0c2e2457a4729dcdd447085",
-        "version" : "0.1.1"
       }
     },
     {
@@ -123,8 +114,16 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/substrate-sdk-ios",
       "state" : {
-        "revision" : "ffe292ac3261e35dad9dafd02354818cf75304b3",
-        "version" : "4.4.0"
+        "revision" : "cb7ed4d658e8764e324f66e0a0a53ed99a4c2a6f"
+      }
+    },
+    {
+      "identity" : "swift-scrypt",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/novasamatech/swift-scrypt",
+      "state" : {
+        "revision" : "d8bec07b8becf1bcbd8426d5816dfe6c8234f0bd",
+        "version" : "1.0.3"
       }
     },
     {

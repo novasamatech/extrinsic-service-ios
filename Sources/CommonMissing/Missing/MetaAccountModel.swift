@@ -58,7 +58,6 @@ public struct MetaAccountModel: Equatable, Hashable {
     public let ethereumPublicKey: Data?
     public let chainAccounts: Set<ChainAccountModel>
     public let type: MetaAccountModelType
-    public let multisig: DelegatedAccount.MultisigAccountModel?
 }
 
 extension MetaAccountModel: Operation_iOS.Identifiable {
