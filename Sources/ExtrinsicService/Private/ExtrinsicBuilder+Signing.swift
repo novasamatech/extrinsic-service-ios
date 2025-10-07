@@ -18,7 +18,7 @@ extension ExtrinsicBuilderProtocol {
             throw ExtrinsicBuilderExtensionError.invalidResolvedAccount
         }
 
-        return switch account.chainFormat {
+        return switch account.signatureFormat {
         case .ethereum:
             try signing(
                 by: { data in
@@ -40,7 +40,7 @@ extension ExtrinsicBuilderProtocol {
                 by: { data in
                     try signingClosure(data, .substrateExtrinsic(context))
                 },
-                of: account.cryptoType.utilsType,
+                of: account.signatureType,
                 using: codingFactory,
                 metadata: codingFactory.metadata
             )

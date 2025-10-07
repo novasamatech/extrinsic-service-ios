@@ -8,29 +8,17 @@ public protocol ExtrinsicSenderResolutionFactoryProtocol {
 
 final class ExtrinsicSenderResolutionFactory {
     let chain: ChainModel
-    let chainAccount: ChainAccountResponse
-    let accountProvider: MetaAccountProviding
+    let account: AccountProtocol
     
-    public init(
-        chainAccount: ChainAccountResponse,
-        chain: ChainModel,
-        accountProvider: MetaAccountProviding
-    ) {
-        self.chainAccount = chainAccount
+    public init(account: AccountProtocol, chain: ChainModel) {
+        self.account = account
         self.chain = chain
-        self.accountProvider = accountProvider
-    }
-
-    private func createCurrentResolver(
-        for chainAccount: ChainAccountResponse
-    ) -> CompoundOperationWrapper<ExtrinsicSenderResolving> {
-        let resolver = ExtrinsicCurrentSenderResolver(currentAccount: chainAccount)
-        return CompoundOperationWrapper.createWithResult(resolver)
     }
 }
 
 extension ExtrinsicSenderResolutionFactory: ExtrinsicSenderResolutionFactoryProtocol {
     func createWrapper() -> CompoundOperationWrapper<ExtrinsicSenderResolving> {
-        createCurrentResolver(for: chainAccount)
+        let resolver = ExtrinsicCurrentSenderResolver(currentAccount: account)
+        return CompoundOperationWrapper.createWithResult(resolver)
     }
 }

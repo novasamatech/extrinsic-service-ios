@@ -4,9 +4,9 @@ import CommonMissing
 
 public enum ExtrinsicSenderResolution {
     case none
-    case current(ChainAccountResponse)
+    case current(AccountProtocol)
 
-    public var account: ChainAccountResponse? {
+    public var account: AccountProtocol? {
         switch self {
         case .none:
             return nil
@@ -26,9 +26,9 @@ public protocol ExtrinsicSenderResolving: AnyObject {
 }
 
 final class ExtrinsicCurrentSenderResolver: ExtrinsicSenderResolving {
-    let currentAccount: ChainAccountResponse
+    let currentAccount: AccountProtocol
 
-    init(currentAccount: ChainAccountResponse) {
+    init(currentAccount: AccountProtocol) {
         self.currentAccount = currentAccount
     }
 

@@ -4,7 +4,7 @@ import Operation_iOS
 import CommonMissing
 
 public protocol ExtrinsicFeeEstimatorHostProtocol {
-    var account: ChainAccountResponse { get }
+    var account: AccountProtocol { get }
     var chain: ChainModel { get }
     var connection: JSONRPCEngine { get }
     var runtimeProvider: RuntimeProviderProtocol { get }
@@ -13,7 +13,7 @@ public protocol ExtrinsicFeeEstimatorHostProtocol {
 }
 
 public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol {
-    public let account: ChainAccountResponse
+    public let account: AccountProtocol
     public let chain: ChainModel
     public let connection: JSONRPCEngine
     public let runtimeProvider: RuntimeProviderProtocol
@@ -21,7 +21,7 @@ public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol 
     public let logger: LoggerProtocol?
 
     public init(
-        account: ChainAccountResponse,
+        account: AccountProtocol,
         chain: ChainModel,
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeProviderProtocol,

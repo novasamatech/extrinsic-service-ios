@@ -4,8 +4,6 @@ import Keystore_iOS
 import CommonMissing
 
 public protocol SigningWrapperFactoryProtocol {
-    func createSigningWrapper(
-        for metaId: String,
-        accountResponse: ChainAccountResponse
-    ) -> SigningWrapperProtocol
+    func createSigningWrapper(for account: AccountProtocol) -> SigningWrapperProtocol
+    func createDummySigningWrapper(for account: AccountProtocol) -> SigningWrapperProtocol
 }

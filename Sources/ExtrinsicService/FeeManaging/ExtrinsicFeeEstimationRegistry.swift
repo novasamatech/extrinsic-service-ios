@@ -76,7 +76,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
 
     func createFeeInstallerWrapper(
         payingIn chainAssetId: ChainAssetId?,
-        accountClosure: @escaping () throws -> ChainAccountResponse
+        accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling> {
         let targetAssetId = chainAssetId ?? chain.utilityChainAssetId()
 

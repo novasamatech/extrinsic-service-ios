@@ -41,7 +41,7 @@ private extension ExtrinsicSignedOrigin {
                 }
 
                 let builder = partialBuilder.with(
-                    signaturePayloadFormat: account.type.signaturePayloadFormat
+                    signaturePayloadFormat: account.signaturePayloadFormat
                 )
 
                 let context = ExtrinsicSigningContext.Substrate(
@@ -80,12 +80,9 @@ private extension ExtrinsicSignedOrigin {
 
             switch purpose {
             case .feeEstimation:
-                return try DummySigner(cryptoType: account.cryptoType)
+                return signingWrapperFactory.createDummySigningWrapper(for: account)
             case .submission:
-                return signingWrapperFactory.createSigningWrapper(
-                    for: account.metaId,
-                    accountResponse: account
-                )
+                return signingWrapperFactory.createSigningWrapper(for: account)
             }
         }
     }
