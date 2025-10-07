@@ -1,5 +1,5 @@
 import Foundation
-import CommonMissing
+import SubstrateSdk
 
 struct ExtrinsicStatusServiceInput {
     let extrinsicHash: Data

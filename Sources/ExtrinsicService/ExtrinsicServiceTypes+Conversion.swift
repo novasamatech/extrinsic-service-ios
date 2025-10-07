@@ -1,5 +1,5 @@
 import Foundation
-import CommonMissing
+import SubstrateSdk
 
 extension FeeIndexedExtrinsicResult {
     func convertToTotalFee() -> FeeExtrinsicResult {

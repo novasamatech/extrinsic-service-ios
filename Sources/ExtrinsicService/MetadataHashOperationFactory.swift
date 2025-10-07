@@ -34,7 +34,7 @@ public final class MetadataHashOperationFactory {
         JSONRPCOperation<[String], RuntimeVersionFull>(
             engine: connection,
             method: RPCMethod.getRuntimeVersion,
-            timeout: JSONRPCTimeout.hour
+            timeout: 3600
         )
     }
 

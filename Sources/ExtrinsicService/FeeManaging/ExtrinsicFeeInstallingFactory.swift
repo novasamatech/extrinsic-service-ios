@@ -1,6 +1,6 @@
 import Foundation
 import Operation_iOS
-import CommonMissing
+import SubstrateSdk
 
 protocol ExtrinsicFeeInstallingFactoryProtocol {
     func createFeeInstallerWrapper(

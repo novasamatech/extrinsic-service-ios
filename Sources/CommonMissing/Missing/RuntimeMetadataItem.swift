@@ -6,7 +6,7 @@ protocol RuntimeContainerSourceProtocol {
     var metadata: Data { get }
 }
 
-/*public struct RuntimeMetadataItem: Codable & Equatable, RuntimeContainerSourceProtocol {
+public struct RuntimeMetadataItem: Codable & Equatable, RuntimeContainerSourceProtocol {
     public enum CodingKeys: String, CodingKey {
         case chain
         case version
@@ -26,4 +26,4 @@ protocol RuntimeContainerSourceProtocol {
 
 extension RuntimeMetadataItem: Identifiable {
     public var identifier: String { chain }
-}*/
+}

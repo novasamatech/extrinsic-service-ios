@@ -1,6 +1,5 @@
 import Foundation
-
-import CommonMissing
+import SubstrateSdk
 
 struct ExtrinsicStatusUpdate {
     let extrinsicHash: String

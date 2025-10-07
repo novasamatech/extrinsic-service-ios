@@ -1,7 +1,5 @@
 import Foundation
-import Keystore_iOS
-
-import CommonMissing
+import SubstrateSdk
 
 public protocol SigningWrapperFactoryProtocol {
     func createSigningWrapper(for account: AccountProtocol) -> SigningWrapperProtocol

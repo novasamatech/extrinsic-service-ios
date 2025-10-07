@@ -1,6 +1,6 @@
 import Foundation
 import Operation_iOS
-import CommonMissing
+import SubstrateSdk
 
 public protocol ExtrinsicSenderResolutionFactoryProtocol {
     func createWrapper() -> CompoundOperationWrapper<ExtrinsicSenderResolving>

@@ -1,7 +1,6 @@
 import Foundation
 import BigInt
-
-import CommonMissing
+import SubstrateSdk
 
 public struct ExtrinsicFeePayer: Equatable {
     enum Reason: Equatable {
