@@ -7,7 +7,7 @@ import CommonMissing
 
 public protocol MetadataHashOperationFactoryProtocol {
     func createCheckMetadataHashWrapper(
-        for chain: ChainModel,
+        for chain: ChainProtocol,
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeCodingServiceProtocol
     ) -> CompoundOperationWrapper<Data?>
@@ -17,7 +17,7 @@ public final class MetadataHashOperationFactory {
     let operationQueue: OperationQueue
     let metadataRepositoryFactory: RuntimeMetadataRepositoryFactoryProtocol
 
-    let cache: InMemoryCache<ChainModel.Id, Data>
+    let cache: InMemoryCache<ChainId, Data>
 
     public init(
         metadataRepositoryFactory: RuntimeMetadataRepositoryFactoryProtocol,
@@ -39,7 +39,7 @@ public final class MetadataHashOperationFactory {
     }
 
     private func createFetchMetadataHashWrapper(
-        for chain: ChainModel,
+        for chain: ChainProtocol,
         connection: JSONRPCEngine
     ) -> CompoundOperationWrapper<Data?> {
         let rawMetadataOperation = metadataRepositoryFactory.createRepository().fetchOperation(
@@ -63,7 +63,7 @@ public final class MetadataHashOperationFactory {
                 )
             }
 
-            guard let utilityAsset = chain.utilityAssets().first else {
+            guard let utilityAsset = chain.utilityAsset() else {
                 throw CommonMetadataShortenerError.missingNativeAsset
             }
 
@@ -78,7 +78,7 @@ public final class MetadataHashOperationFactory {
                 specVersion: runtimeVersion.specVersion,
                 specName: runtimeVersion.specName,
                 decimals: decimals,
-                base58Prefix: chain.addressPrefix.toSubstrateFormat(),
+                base58Prefix: chain.base58Prefix,
                 tokenSymbol: utilityAsset.symbol
             )
 
@@ -100,7 +100,7 @@ public final class MetadataHashOperationFactory {
 
 extension MetadataHashOperationFactory: MetadataHashOperationFactoryProtocol {
     public func createCheckMetadataHashWrapper(
-        for chain: ChainModel,
+        for chain: ChainProtocol,
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeCodingServiceProtocol
     ) -> CompoundOperationWrapper<Data?> {

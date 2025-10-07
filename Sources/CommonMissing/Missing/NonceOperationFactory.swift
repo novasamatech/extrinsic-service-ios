@@ -9,11 +9,11 @@ public protocol NonceOperationFactoryProtocol {
 }
 
 public final class SubstrateNonceOperationFactory {
-    let chain: ChainModel
+    let chain: ChainProtocol
     let connection: JSONRPCEngine
     let timeout: Int
 
-    init(chain: ChainModel, connection: JSONRPCEngine, timeout: Int) {
+    init(chain: ChainProtocol, connection: JSONRPCEngine, timeout: Int) {
         self.chain = chain
         self.connection = connection
         self.timeout = timeout
@@ -21,7 +21,7 @@ public final class SubstrateNonceOperationFactory {
 
     private func createOperation(
         for accountIdClosure: @escaping () throws -> AccountId,
-        chain: ChainModel
+        chain: ChainProtocol
     ) -> BaseOperation<UInt32> {
         let operation = JSONRPCListOperation<UInt32>(
             engine: connection,
@@ -32,7 +32,7 @@ public final class SubstrateNonceOperationFactory {
         operation.configurationBlock = {
             do {
                 let accountId = try accountIdClosure()
-                let address = try accountId.toAddress(using: chain.chainFormat)
+                let address = try chain.address(for: accountId)
                 operation.parameters = [address]
             } catch {
                 operation.result = .failure(error)

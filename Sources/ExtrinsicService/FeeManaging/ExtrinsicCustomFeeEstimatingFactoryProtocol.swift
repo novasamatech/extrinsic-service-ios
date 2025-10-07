@@ -3,5 +3,5 @@ import Operation_iOS
 import CommonMissing
 
 protocol ExtrinsicCustomFeeEstimatingFactoryProtocol {
-    func createCustomFeeEstimator(for chainAsset: ChainAsset) -> ExtrinsicFeeEstimating?
+    func createCustomFeeEstimator(for chainAsset: ChainAssetProtocol) -> ExtrinsicFeeEstimating?
 }

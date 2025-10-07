@@ -2,6 +2,6 @@ import Foundation
 import CommonMissing
 
 struct ExtrinsicSubmissionParams {
-    let feeAssetId: ChainAssetId?
+    let feeAssetId: ChainAssetIdProtocol?
     let eventsMatcher: ExtrinsicEventsMatching?
 }

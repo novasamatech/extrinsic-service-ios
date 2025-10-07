@@ -8,7 +8,7 @@ protocol ExtrinsicServiceProtocol {
     func estimateFee(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping EstimateFeeClosure
     )
@@ -16,7 +16,7 @@ protocol ExtrinsicServiceProtocol {
     func estimateFee(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         indexes: IndexSet,
         completion completionClosure: @escaping EstimateFeeIndexedClosure
@@ -25,7 +25,7 @@ protocol ExtrinsicServiceProtocol {
     func estimateFeeWithSplitter(
         _ splitter: ExtrinsicSplitting,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping EstimateFeeIndexedClosure
     )
@@ -33,7 +33,7 @@ protocol ExtrinsicServiceProtocol {
     func submit(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping ExtrinsicSubmitClosure
     )
@@ -41,7 +41,7 @@ protocol ExtrinsicServiceProtocol {
     func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         indexes: IndexSet,
         completion completionClosure: @escaping ExtrinsicSubmitIndexedClosure
@@ -50,7 +50,7 @@ protocol ExtrinsicServiceProtocol {
     func submitWithTxSplitter(
         _ splitter: ExtrinsicSplitting,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping ExtrinsicSubmitIndexedClosure
     )
@@ -58,7 +58,7 @@ protocol ExtrinsicServiceProtocol {
     func submitAndWatch(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         subscriptionIdClosure: @escaping ExtrinsicSubscriptionIdClosure,
         notificationClosure: @escaping ExtrinsicSubscriptionStatusClosure
@@ -69,7 +69,7 @@ protocol ExtrinsicServiceProtocol {
     func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping ExtrinsicBuiltClosure
     )
@@ -192,7 +192,7 @@ extension ExtrinsicServiceProtocol {
     func submitWithTxSplitter(
         _ splitter: ExtrinsicSplitting,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         completion completionClosure: @escaping ExtrinsicSubmitIndexedClosure
     ) {
@@ -208,7 +208,7 @@ extension ExtrinsicServiceProtocol {
     func submitAndWatch(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         runningIn queue: DispatchQueue,
         subscriptionIdClosure: @escaping ExtrinsicSubscriptionIdClosure,
         notificationClosure: @escaping ExtrinsicSubscriptionStatusClosure

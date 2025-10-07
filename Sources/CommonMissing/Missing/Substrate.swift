@@ -51,9 +51,9 @@ public enum Substrate {
 }
 
 public extension Substrate {
-    public typealias WeightV1 = StringScaleMapper<UInt64>
+    typealias WeightV1 = StringScaleMapper<UInt64>
 
-    public struct WeightV1P5: Codable, Equatable {
+    struct WeightV1P5: Codable, Equatable {
         @StringCodable var refTime: BigUInt
     }
 
@@ -64,28 +64,28 @@ public extension Substrate {
 
     typealias Weight = WeightV2
 
-    public struct BlockWeights: Decodable {
+    struct BlockWeights: Decodable {
         @Substrate.WeightDecodable var maxBlock: Weight
         let perClass: PerDispatchClass<WeightsPerClass>
     }
 
-    public struct PerDispatchClass<T: Decodable>: Decodable {
+    struct PerDispatchClass<T: Decodable>: Decodable {
         let normal: T
         let operational: T
         let mandatory: T
     }
 
-    public struct WeightsPerClass: Decodable {
+    struct WeightsPerClass: Decodable {
         @OptionalWeightDecodable var maxExtrinsic: Weight?
         @OptionalWeightDecodable var maxTotal: Weight?
     }
 
-    public typealias PerDispatchClassWithWeight = PerDispatchClass<Weight>
+    typealias PerDispatchClassWithWeight = PerDispatchClass<Weight>
 }
 
 public extension Substrate {
     @propertyWrapper
-    public struct WeightDecodable: Decodable {
+    struct WeightDecodable: Decodable {
         public let wrappedValue: Weight
 
         public init(wrappedValue: Weight) {
@@ -140,7 +140,7 @@ public extension Substrate {
     }
 
     @propertyWrapper
-    public struct OptionalWeightDecodable: Decodable {
+    struct OptionalWeightDecodable: Decodable {
         public let wrappedValue: Weight?
 
         public init(wrappedValue: Weight?) {

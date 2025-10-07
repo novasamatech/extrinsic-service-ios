@@ -10,14 +10,14 @@ enum ExtrinsicOperationFactoryError: Error {
 }
 
 final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
-    let chain: ChainModel
+    let chain: ChainProtocol
     let customExtensions: [TransactionExtending]
     let eraOperationFactory: ExtrinsicEraOperationFactoryProtocol
     let metadataHashOperationFactory: MetadataHashOperationFactoryProtocol
     let extrinsicVersion: Extrinsic.Version
 
     init(
-        chain: ChainModel,
+        chain: ChainProtocol,
         extrinsicVersion: Extrinsic.Version,
         feeEstimationRegistry: ExtrinsicFeeEstimationRegistring,
         runtimeRegistry: RuntimeCodingServiceProtocol,
@@ -68,7 +68,7 @@ final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
     private func createPartialBuildersWrapper(
         customClosure: @escaping ExtrinsicBuilderIndexedClosure,
         indexes: [Int],
-        chain: ChainModel,
+        chain: ChainProtocol,
         extrinsicVersion: Extrinsic.Version,
         customExtensions: [TransactionExtending],
         codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>
@@ -159,7 +159,7 @@ final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
     override func createExtrinsicWrapper(
         customClosure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         purpose: ExtrinsicOriginPurpose,
         indexes: [Int]
     ) -> CompoundOperationWrapper<ExtrinsicsCreationResult> {

@@ -6,7 +6,7 @@ import CommonMissing
 public protocol BlockEventsQueryFactoryProtocol {
     func queryBlockDetailsWrapper(
         from connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         blockHash: Data
     ) -> CompoundOperationWrapper<SubstrateBlockDetails>
 }
@@ -83,7 +83,7 @@ public final class BlockEventsQueryFactory {
 extension BlockEventsQueryFactory: BlockEventsQueryFactoryProtocol {
     public func queryBlockDetailsWrapper(
         from connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         blockHash: Data
     ) -> CompoundOperationWrapper<SubstrateBlockDetails> {
         let codingFactoryOperation = runtimeProvider.fetchCoderFactoryOperation()

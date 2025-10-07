@@ -6,10 +6,10 @@ import CommonMissing
 
 
 final class ExtrinsicNativeFeeEstimator {
-    let chain: ChainModel
+    let chain: ChainProtocol
     let operationQueue: OperationQueue
 
-    init(chain: ChainModel, operationQueue: OperationQueue) {
+    init(chain: ChainProtocol, operationQueue: OperationQueue) {
         self.chain = chain
         self.operationQueue = operationQueue
     }

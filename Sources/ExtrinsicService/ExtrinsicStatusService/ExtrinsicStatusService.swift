@@ -19,13 +19,13 @@ enum ExtrinsicStatusServiceError: Error {
 
 final class ExtrinsicStatusService {
     let connection: JSONRPCEngine
-    let runtimeProvider: RuntimeProviderProtocol
+    let runtimeProvider: RuntimeCodingServiceProtocol
     let eventsQueryFactory: BlockEventsQueryFactoryProtocol
     let logger: LoggerProtocol?
 
     init(
         connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         eventsQueryFactory: BlockEventsQueryFactoryProtocol,
         logger: LoggerProtocol? = nil
     ) {

@@ -5,26 +5,26 @@ import CommonMissing
 
 public protocol ExtrinsicFeeEstimatorHostProtocol {
     var account: AccountProtocol { get }
-    var chain: ChainModel { get }
+    var chain: ChainProtocol { get }
     var connection: JSONRPCEngine { get }
-    var runtimeProvider: RuntimeProviderProtocol { get }
+    var runtimeProvider: RuntimeCodingServiceProtocol { get }
     var operationQueue: OperationQueue { get }
     var logger: LoggerProtocol? { get }
 }
 
 public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol {
     public let account: AccountProtocol
-    public let chain: ChainModel
+    public let chain: ChainProtocol
     public let connection: JSONRPCEngine
-    public let runtimeProvider: RuntimeProviderProtocol
+    public let runtimeProvider: RuntimeCodingServiceProtocol
     public let operationQueue: OperationQueue
     public let logger: LoggerProtocol?
 
     public init(
         account: AccountProtocol,
-        chain: ChainModel,
+        chain: ChainProtocol,
         connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         operationQueue: OperationQueue,
         logger: LoggerProtocol? = nil
     ) {

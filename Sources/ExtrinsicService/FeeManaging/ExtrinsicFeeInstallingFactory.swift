@@ -4,7 +4,7 @@ import CommonMissing
 
 protocol ExtrinsicFeeInstallingFactoryProtocol {
     func createFeeInstallerWrapper(
-        chainAsset: ChainAsset,
+        chainAsset: ChainAssetProtocol,
         accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling>
 }

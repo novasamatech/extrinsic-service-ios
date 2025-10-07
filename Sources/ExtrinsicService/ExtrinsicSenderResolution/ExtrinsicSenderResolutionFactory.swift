@@ -7,12 +7,10 @@ public protocol ExtrinsicSenderResolutionFactoryProtocol {
 }
 
 final class ExtrinsicSenderResolutionFactory {
-    let chain: ChainModel
     let account: AccountProtocol
     
-    public init(account: AccountProtocol, chain: ChainModel) {
+    public init(account: AccountProtocol) {
         self.account = account
-        self.chain = chain
     }
 }
 
