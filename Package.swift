@@ -14,7 +14,7 @@ let package = Package(
             ]),
     ],
     dependencies: [
-        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "4.4.0"),
+        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.0.0"),
         .package(url: "https://github.com/novasamatech/Keystore-iOS", exact: "1.0.1"),
         .package(url: "https://github.com/novasamatech/metadata-shortener-ios", exact: "0.2.1"),
     ],
@@ -23,21 +23,16 @@ let package = Package(
             name: "ExtrinsicService",
             dependencies: [
                 .product(name: "SubstrateSdk", package: "substrate-sdk-ios"),
+                .product(name: "SubstrateMetadataHash", package: "substrate-sdk-ios"),
+                .product(name: "SubstrateStorageQuery", package: "substrate-sdk-ios"),
                 .product(name: "MetadataShortenerApi", package: "metadata-shortener-ios"),
-                "Keystore-iOS",
-                "CommonMissing",
+                "Keystore-iOS"
             ]
         ),
         .testTarget(
             name: "ExtrinsicServiceTests",
             dependencies: [
                 "ExtrinsicService"
-            ]
-        ),
-        .target(
-            name: "CommonMissing",
-            dependencies: [
-                .product(name: "SubstrateSdk", package: "substrate-sdk-ios"),
             ]
         )
     ]

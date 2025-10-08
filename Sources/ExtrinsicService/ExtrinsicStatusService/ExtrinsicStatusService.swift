@@ -1,7 +1,6 @@
 import Foundation
 import Operation_iOS
 import SubstrateSdk
-import CommonMissing
 
 protocol ExtrinsicStatusServiceProtocol {
     func fetchExtrinsicStatusForHash(
@@ -19,15 +18,15 @@ enum ExtrinsicStatusServiceError: Error {
 
 final class ExtrinsicStatusService {
     let connection: JSONRPCEngine
-    let runtimeProvider: RuntimeProviderProtocol
+    let runtimeProvider: RuntimeCodingServiceProtocol
     let eventsQueryFactory: BlockEventsQueryFactoryProtocol
-    let logger: LoggerProtocol?
+    let logger: SDKLoggerProtocol?
 
     init(
         connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         eventsQueryFactory: BlockEventsQueryFactoryProtocol,
-        logger: LoggerProtocol? = nil
+        logger: SDKLoggerProtocol? = nil
     ) {
         self.connection = connection
         self.runtimeProvider = runtimeProvider

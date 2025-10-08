@@ -1,6 +1,5 @@
 import Foundation
 import SubstrateSdk
-import CommonMissing
 
 public struct SubstrateBlockDetails {
     let extrinsicsWithEvents: SubstrateExtrinsicsEvents

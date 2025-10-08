@@ -1,36 +1,29 @@
 import Foundation
 import SubstrateSdk
 import Operation_iOS
-import CommonMissing
 
 public protocol ExtrinsicFeeEstimatorHostProtocol {
-    var account: ChainAccountResponse { get }
-    var chain: ChainModel { get }
+    var account: AccountProtocol { get }
+    var chain: ChainProtocol { get }
     var connection: JSONRPCEngine { get }
-    var runtimeProvider: RuntimeProviderProtocol { get }
-    var userStorageFacade: StorageFacadeProtocol { get }
-    var substrateStorageFacade: StorageFacadeProtocol { get }
+    var runtimeProvider: RuntimeCodingServiceProtocol { get }
     var operationQueue: OperationQueue { get }
     var logger: LoggerProtocol? { get }
 }
 
 public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol {
-    public let account: ChainAccountResponse
-    public let chain: ChainModel
+    public let account: AccountProtocol
+    public let chain: ChainProtocol
     public let connection: JSONRPCEngine
-    public let runtimeProvider: RuntimeProviderProtocol
-    public let userStorageFacade: StorageFacadeProtocol
-    public let substrateStorageFacade: StorageFacadeProtocol
+    public let runtimeProvider: RuntimeCodingServiceProtocol
     public let operationQueue: OperationQueue
     public let logger: LoggerProtocol?
 
     public init(
-        account: ChainAccountResponse,
-        chain: ChainModel,
+        account: AccountProtocol,
+        chain: ChainProtocol,
         connection: JSONRPCEngine,
-        runtimeProvider: RuntimeProviderProtocol,
-        userStorageFacade: StorageFacadeProtocol,
-        substrateStorageFacade: StorageFacadeProtocol,
+        runtimeProvider: RuntimeCodingServiceProtocol,
         operationQueue: OperationQueue,
         logger: LoggerProtocol? = nil
     ) {
@@ -38,8 +31,6 @@ public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol 
         self.chain = chain
         self.connection = connection
         self.runtimeProvider = runtimeProvider
-        self.userStorageFacade = userStorageFacade
-        self.substrateStorageFacade = substrateStorageFacade
         self.operationQueue = operationQueue
         self.logger = logger
     }

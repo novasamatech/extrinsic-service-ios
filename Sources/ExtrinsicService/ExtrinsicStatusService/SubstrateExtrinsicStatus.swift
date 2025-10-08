@@ -1,5 +1,5 @@
 import Foundation
-import CommonMissing
+import SubstrateSdk
 
 enum SubstrateExtrinsicStatus {
     struct SuccessExtrinsic {
@@ -11,7 +11,7 @@ enum SubstrateExtrinsicStatus {
     struct FailedExtrinsic {
         let extrinsicHash: ExtrinsicHash
         let blockHash: BlockHash
-        let error: DispatchCallError
+        let error: Substrate.DispatchCallError
     }
 
     case success(SuccessExtrinsic)

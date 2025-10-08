@@ -1,6 +1,5 @@
 import Operation_iOS
 import SubstrateSdk
-import CommonMissing
 
 public protocol ExtrinsicFeeEstimatingWrapperFactoryProtocol {
     func createNativeFeeEstimatingWrapper(
@@ -8,7 +7,7 @@ public protocol ExtrinsicFeeEstimatingWrapperFactoryProtocol {
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
 
     func createCustomFeeEstimatingWrapper(
-        asset: AssetModel,
+        asset: AssetProtocol,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
 }
@@ -39,17 +38,16 @@ public final class ExtrinsicFeeEstimatingWrapperFactory: ExtrinsicFeeEstimatingW
     }
 
     public func createCustomFeeEstimatingWrapper(
-        asset: AssetModel,
+        asset: AssetProtocol,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
-        let chainAsset = ChainAssetImpl(chain: host.chain, asset: asset)
-
         guard
+            let chainAsset = host.chain.chainAsset(for: asset.assetId),
             let customFeeEstimator = customFeeEstimatorFactory.createCustomFeeEstimator(
                 for: chainAsset
             ) else {
             return .createWithError(
-                ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(chainAsset.chainAssetId)
+                ExtrinsicFeeEstimationRegistryError.unexpectedAsset(asset)
             )
         }
 
@@ -59,9 +57,4 @@ public final class ExtrinsicFeeEstimatingWrapperFactory: ExtrinsicFeeEstimatingW
             extrinsicCreatingResultClosure: extrinsicCreatingResultClosure
         )
     }
-}
-
-struct ChainAssetImpl: ChainAsset {
-    let chain: ChainModel
-    let asset: AssetModel
 }

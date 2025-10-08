@@ -11,6 +11,7 @@ public protocol ExtrinsicSplitting: AnyObject {
     func adding<T: RuntimeCallable>(call: T) -> Self
 
     func buildWrapper(
-        using operationFactory: ExtrinsicOperationFactoryProtocol
+        using operationFactory: ExtrinsicOperationFactoryProtocol,
+        origin: ExtrinsicOriginDefining
     ) -> CompoundOperationWrapper<ExtrinsicSplittingResult>
 }

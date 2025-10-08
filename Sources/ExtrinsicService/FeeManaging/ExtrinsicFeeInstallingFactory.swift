@@ -1,10 +1,10 @@
 import Foundation
 import Operation_iOS
-import CommonMissing
+import SubstrateSdk
 
 protocol ExtrinsicFeeInstallingFactoryProtocol {
     func createFeeInstallerWrapper(
-        chainAsset: ChainAsset,
-        accountClosure: @escaping () throws -> ChainAccountResponse
+        chainAsset: ChainAssetProtocol,
+        accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling>
 }

@@ -2,7 +2,6 @@ import Foundation
 import Operation_iOS
 import BigInt
 import SubstrateSdk
-import CommonMissing
 
 public protocol ExtrinsicFeeEstimationResultProtocol {
     var items: [ExtrinsicFeeProtocol] { get }
@@ -22,12 +21,12 @@ protocol ExtrinsicFeeEstimating {
 
 protocol ExtrinsicFeeEstimationRegistring {
     func createFeeEstimatingWrapper(
-        payingIn chainAssetId: ChainAssetId?,
+        payingIn chainAssetId: ChainAssetIdProtocol?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
 
     func createFeeInstallerWrapper(
-        payingIn chainAssetId: ChainAssetId?,
-        accountClosure: @escaping () throws -> ChainAccountResponse
+        payingIn chainAssetId: ChainAssetIdProtocol?,
+        accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling>
 }

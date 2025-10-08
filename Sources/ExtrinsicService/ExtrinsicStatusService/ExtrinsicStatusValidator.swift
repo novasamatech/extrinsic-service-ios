@@ -1,5 +1,5 @@
 import Foundation
-import CommonMissing
+import SubstrateSdk
 
 protocol ExtrinsicStatusValidating {
     func ensureSuccess(from events: [Event], codingFactory: RuntimeCoderFactoryProtocol) throws
@@ -11,9 +11,9 @@ enum ExtrinsicStatusValidatorError: Error {
 }
 
 final class ExtrinsicStatusValidator {
-    let logger: LoggerProtocol
+    let logger: SDKLoggerProtocol
 
-    init(logger: LoggerProtocol) {
+    init(logger: SDKLoggerProtocol) {
         self.logger = logger
     }
 }
