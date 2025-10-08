@@ -1,6 +1,5 @@
 import Foundation
 import SubstrateSdk
-import CommonMissing
 
 enum ExtrinsicEventsMatcherError: Error {
     case eventCodingPathFailed

@@ -3,7 +3,6 @@ import Operation_iOS
 import SubstrateSdk
 import NovaCrypto
 import BigInt
-import CommonMissing
 
 public protocol ExtrinsicOperationFactoryProtocol {
     var connection: JSONRPCEngine { get }

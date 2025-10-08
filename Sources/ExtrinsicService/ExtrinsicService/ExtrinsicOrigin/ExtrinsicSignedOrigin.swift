@@ -1,7 +1,6 @@
 import Foundation
 import Operation_iOS
 import SubstrateSdk
-import CommonMissing
 
 enum ExtrinsicSignedOriginError: Error {
     case noSigningAccountFound
@@ -44,8 +43,8 @@ private extension ExtrinsicSignedOrigin {
                     signaturePayloadFormat: account.signaturePayloadFormat
                 )
 
-                let context = ExtrinsicSigningContext.Substrate(
-                    senderResolution: dependencies.senderResolution,
+                let context = SigningContext.SubstrateExtrinsic(
+                    signerProvider: dependencies.senderResolution,
                     extrinsicMemo: builder.makeMemo(),
                     codingFactory: codingFactory
                 )
@@ -80,7 +79,7 @@ private extension ExtrinsicSignedOrigin {
 
             switch purpose {
             case .feeEstimation:
-                return signingWrapperFactory.createDummySigningWrapper(for: account)
+                return DummySigner()
             case .submission:
                 return signingWrapperFactory.createSigningWrapper(for: account)
             }

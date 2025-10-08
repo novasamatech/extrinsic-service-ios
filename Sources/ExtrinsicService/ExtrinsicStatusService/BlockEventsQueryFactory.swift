@@ -1,7 +1,7 @@
 import Foundation
 import Operation_iOS
 import SubstrateSdk
-import CommonMissing
+import SubstrateStorageQuery
 
 public protocol BlockEventsQueryFactoryProtocol {
     func queryBlockDetailsWrapper(

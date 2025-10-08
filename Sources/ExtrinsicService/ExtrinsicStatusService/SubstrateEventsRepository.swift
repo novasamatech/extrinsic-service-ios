@@ -1,6 +1,5 @@
 import Foundation
 import SubstrateSdk
-import CommonMissing
 
 public protocol SubstrateEventsRepositoryProtocol {
     func getInherentEvents(from eventRecords: [EventRecord]) -> SubstrateInherentsEvents

@@ -3,7 +3,7 @@ import Operation_iOS
 import SubstrateSdk
 import NovaCrypto
 import BigInt
-import CommonMissing
+import SubstrateMetadataHash
 
 enum ExtrinsicOperationFactoryError: Error {
     case missingSender

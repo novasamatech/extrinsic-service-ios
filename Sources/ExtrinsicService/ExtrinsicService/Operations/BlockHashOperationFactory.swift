@@ -1,7 +1,6 @@
 import Foundation
 import Operation_iOS
 import SubstrateSdk
-import CommonMissing
 
 public protocol BlockHashOperationFactoryProtocol {
     func createBlockHashOperation(

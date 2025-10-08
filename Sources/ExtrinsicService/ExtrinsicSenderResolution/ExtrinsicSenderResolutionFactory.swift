@@ -6,7 +6,7 @@ public protocol ExtrinsicSenderResolutionFactoryProtocol {
     func createWrapper() -> CompoundOperationWrapper<ExtrinsicSenderResolving>
 }
 
-final class ExtrinsicSenderResolutionFactory {
+public final class ExtrinsicSenderResolutionFactory {
     let account: AccountProtocol
     
     public init(account: AccountProtocol) {
@@ -15,7 +15,7 @@ final class ExtrinsicSenderResolutionFactory {
 }
 
 extension ExtrinsicSenderResolutionFactory: ExtrinsicSenderResolutionFactoryProtocol {
-    func createWrapper() -> CompoundOperationWrapper<ExtrinsicSenderResolving> {
+    public func createWrapper() -> CompoundOperationWrapper<ExtrinsicSenderResolving> {
         let resolver = ExtrinsicCurrentSenderResolver(currentAccount: account)
         return CompoundOperationWrapper.createWithResult(resolver)
     }

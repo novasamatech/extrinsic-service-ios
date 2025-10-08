@@ -2,7 +2,6 @@ import Foundation
 import SubstrateSdk
 import Operation_iOS
 import BigInt
-import CommonMissing
 
 enum BaseExtrinsicOperationFactoryError: Error {
     case undefinedCryptoType

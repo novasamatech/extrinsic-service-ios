@@ -2,7 +2,7 @@ import Foundation
 import SubstrateSdk
 import Operation_iOS
 import NovaCrypto
-import CommonMissing
+import SubstrateMetadataHash
 
 final class ExtrinsicService {
     let operationFactory: ExtrinsicOperationFactoryProtocol
