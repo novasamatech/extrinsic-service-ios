@@ -3,15 +3,15 @@ import SubstrateSdk
 
 public enum SubstrateExtrinsicStatus {
     public struct SuccessExtrinsic {
-        let extrinsicHash: ExtrinsicHash
-        let blockHash: BlockHash
-        let interestedEvents: [Event]
+        public let extrinsicHash: ExtrinsicHash
+        public let blockHash: BlockHash
+        public let interestedEvents: [Event]
     }
 
     public struct FailedExtrinsic {
-        let extrinsicHash: ExtrinsicHash
-        let blockHash: BlockHash
-        let error: Substrate.DispatchCallError
+        public let extrinsicHash: ExtrinsicHash
+        public let blockHash: BlockHash
+        public let error: Substrate.DispatchCallError
     }
 
     case success(SuccessExtrinsic)
