@@ -1,6 +1,6 @@
 import Foundation
 import SubstrateSdk
 
-protocol ExtrinsicCustomFeeEstimatingFactoryProtocol {
+public protocol ExtrinsicCustomFeeEstimatingFactoryProtocol {
     func createCustomFeeEstimator(for chainAsset: ChainAssetProtocol) -> ExtrinsicFeeEstimating?
 }

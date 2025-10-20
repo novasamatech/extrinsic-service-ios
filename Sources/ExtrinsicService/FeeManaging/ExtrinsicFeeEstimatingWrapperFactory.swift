@@ -16,7 +16,7 @@ public final class ExtrinsicFeeEstimatingWrapperFactory: ExtrinsicFeeEstimatingW
     let host: ExtrinsicFeeEstimatorHostProtocol
     let customFeeEstimatorFactory: ExtrinsicCustomFeeEstimatingFactoryProtocol
 
-    init(
+    public init(
         host: ExtrinsicFeeEstimatorHostProtocol,
         customFeeEstimatorFactory: ExtrinsicCustomFeeEstimatingFactoryProtocol
     ) {
