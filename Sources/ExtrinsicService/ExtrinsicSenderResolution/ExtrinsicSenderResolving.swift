@@ -24,14 +24,14 @@ public protocol ExtrinsicSenderResolving: AnyObject {
     ) throws -> ExtrinsicSenderBuilderResolution
 }
 
-final class ExtrinsicCurrentSenderResolver: ExtrinsicSenderResolving {
+public final class ExtrinsicCurrentSenderResolver: ExtrinsicSenderResolving {
     let currentAccount: AccountProtocol
 
-    init(currentAccount: AccountProtocol) {
+    public init(currentAccount: AccountProtocol) {
         self.currentAccount = currentAccount
     }
 
-    func resolveSender(
+    public func resolveSender(
         wrapping builders: [ExtrinsicBuilderProtocol],
         codingFactory _: RuntimeCoderFactoryProtocol
     ) throws -> ExtrinsicSenderBuilderResolution {

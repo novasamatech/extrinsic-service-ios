@@ -22,7 +22,7 @@ final class ExtrinsicStatusService {
     let eventsQueryFactory: BlockEventsQueryFactoryProtocol
     let logger: SDKLoggerProtocol?
 
-    init(
+    public init(
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeCodingServiceProtocol,
         eventsQueryFactory: BlockEventsQueryFactoryProtocol,

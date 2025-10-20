@@ -2,13 +2,13 @@ import Foundation
 import SubstrateSdk
 
 public struct ExtrinsicRetriableResult<R> {
-    struct IndexedResult {
+    public struct IndexedResult {
         let index: Int
         let result: Result<R, Error>
     }
 
-    let builderClosure: ExtrinsicBuilderIndexedClosure?
-    let results: [IndexedResult]
+    public let builderClosure: ExtrinsicBuilderIndexedClosure?
+    public let results: [IndexedResult]
 
     init(
         builderClosure: ExtrinsicBuilderIndexedClosure?,
@@ -27,7 +27,7 @@ public struct ExtrinsicRetriableResult<R> {
         results = indexes.map { .init(index: $0, result: .failure(error)) }
     }
 
-    func failedIndexes() -> IndexSet {
+    public func failedIndexes() -> IndexSet {
         let indexList: [Int] = results.compactMap { indexedResult in
             switch indexedResult.result {
             case .success:
@@ -40,7 +40,7 @@ public struct ExtrinsicRetriableResult<R> {
         return IndexSet(indexList)
     }
 
-    func errors() -> [Error] {
+    public func errors() -> [Error] {
         let errors: [Error] = results.compactMap { indexedResult in
             switch indexedResult.result {
             case .success:
@@ -54,7 +54,7 @@ public struct ExtrinsicRetriableResult<R> {
     }
 }
 
-extension ExtrinsicRetriableResult where R == ExtrinsicSubmittedModel {
+public extension ExtrinsicRetriableResult where R == ExtrinsicSubmittedModel {
     func senders() -> [ExtrinsicSenderResolution] {
         let senders: [ExtrinsicSenderResolution] = results.compactMap { indexedResult in
             switch indexedResult.result {
@@ -70,15 +70,15 @@ extension ExtrinsicRetriableResult where R == ExtrinsicSubmittedModel {
 }
 
 public struct ExtrinsicSubmittedModel {
-    let txHash: String
-    let sender: ExtrinsicSenderResolution
+    public let txHash: String
+    public let sender: ExtrinsicSenderResolution
 }
 
-struct ExtrinsicSubscribedStatusModel {
-    let statusUpdate: ExtrinsicStatusUpdate
-    let sender: ExtrinsicSenderResolution
+public struct ExtrinsicSubscribedStatusModel {
+    public let statusUpdate: ExtrinsicStatusUpdate
+    public let sender: ExtrinsicSenderResolution
 
-    var extrinsicSubmittedModel: ExtrinsicSubmittedModel {
+    public var extrinsicSubmittedModel: ExtrinsicSubmittedModel {
         ExtrinsicSubmittedModel(
             txHash: statusUpdate.extrinsicHash,
             sender: sender
@@ -87,31 +87,31 @@ struct ExtrinsicSubscribedStatusModel {
 }
 
 public struct ExtrinsicBuiltModel {
-    let extrinsic: String
-    let sender: ExtrinsicSenderResolution
+    public let extrinsic: String
+    public let sender: ExtrinsicSenderResolution
 }
 
-typealias FeeExtrinsicResult = Result<ExtrinsicFeeProtocol, Error>
+public typealias FeeExtrinsicResult = Result<ExtrinsicFeeProtocol, Error>
 public typealias FeeIndexedExtrinsicResult = ExtrinsicRetriableResult<ExtrinsicFeeProtocol>
 
-typealias EstimateFeeClosure = (FeeExtrinsicResult) -> Void
-typealias EstimateFeeIndexedClosure = (FeeIndexedExtrinsicResult) -> Void
+public typealias EstimateFeeClosure = (FeeExtrinsicResult) -> Void
+public typealias EstimateFeeIndexedClosure = (FeeIndexedExtrinsicResult) -> Void
 
-typealias SubmitExtrinsicResult = Result<ExtrinsicSubmittedModel, Error>
+public typealias SubmitExtrinsicResult = Result<ExtrinsicSubmittedModel, Error>
 public typealias SubmitIndexedExtrinsicResult = ExtrinsicRetriableResult<ExtrinsicSubmittedModel>
 
-typealias ExtrinsicSubmitClosure = (SubmitExtrinsicResult) -> Void
-typealias ExtrinsicSubmitIndexedClosure = (SubmitIndexedExtrinsicResult) -> Void
+public typealias ExtrinsicSubmitClosure = (SubmitExtrinsicResult) -> Void
+public typealias ExtrinsicSubmitIndexedClosure = (SubmitIndexedExtrinsicResult) -> Void
 
-typealias ExtrinsicBuiltResult = Result<ExtrinsicBuiltModel, Error>
-typealias ExtrinsicBuiltClosure = (ExtrinsicBuiltResult) -> Void
+public typealias ExtrinsicBuiltResult = Result<ExtrinsicBuiltModel, Error>
+public typealias ExtrinsicBuiltClosure = (ExtrinsicBuiltResult) -> Void
 
-typealias ExtrinsicSubscriptionIdClosure = (UInt16) -> Bool
-typealias ExtrinsicSubscriptionStatusClosure = (Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
+public typealias ExtrinsicSubscriptionIdClosure = (UInt16) -> Bool
+public typealias ExtrinsicSubscriptionStatusClosure = (Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
 
 public typealias ExtrinsicBuilderClosure = (ExtrinsicBuilderProtocol) throws -> (ExtrinsicBuilderProtocol)
 public typealias ExtrinsicBuilderIndexedClosure = (ExtrinsicBuilderProtocol, Int) throws -> (ExtrinsicBuilderProtocol)
 
 public typealias ExtrinsicsCreationResult = (extrinsics: [Data], sender: ExtrinsicSenderResolution)
 
-typealias ExtrinsicSubscriptionUpdate = JSONRPCSubscriptionUpdate<ExtrinsicStatus>
+public typealias ExtrinsicSubscriptionUpdate = JSONRPCSubscriptionUpdate<ExtrinsicStatus>

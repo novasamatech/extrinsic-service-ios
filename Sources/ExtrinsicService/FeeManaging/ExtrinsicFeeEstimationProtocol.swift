@@ -11,7 +11,7 @@ enum ExtrinsicFeeEstimatingError: Error {
     case brokenFee
 }
 
-protocol ExtrinsicFeeEstimating {
+public protocol ExtrinsicFeeEstimating {
     func createFeeEstimatingWrapper(
         connection: JSONRPCEngine,
         runtimeService: RuntimeCodingServiceProtocol,
@@ -19,7 +19,7 @@ protocol ExtrinsicFeeEstimating {
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
 }
 
-protocol ExtrinsicFeeEstimationRegistring {
+public protocol ExtrinsicFeeEstimationRegistring {
     func createFeeEstimatingWrapper(
         payingIn chainAssetId: ChainAssetIdProtocol?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult

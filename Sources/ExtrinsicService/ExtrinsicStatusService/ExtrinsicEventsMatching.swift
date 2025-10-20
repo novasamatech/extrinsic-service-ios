@@ -1,18 +1,18 @@
 import Foundation
 import SubstrateSdk
 
-enum ExtrinsicEventsMatcherError: Error {
+public enum ExtrinsicEventsMatcherError: Error {
     case eventCodingPathFailed
 }
 
-protocol ExtrinsicEventsMatching {
+public protocol ExtrinsicEventsMatching {
     func match(
         event: Event,
         using codingFactory: RuntimeCoderFactoryProtocol
     ) -> Bool
 }
 
-extension ExtrinsicEventsMatching {
+public extension ExtrinsicEventsMatching {
     func firstMatchingFromList(
         _ events: [Event],
         using codingFactory: RuntimeCoderFactoryProtocol
@@ -28,8 +28,10 @@ extension ExtrinsicEventsMatching {
     }
 }
 
-struct ExtrinsicSuccessEventMatcher: ExtrinsicEventsMatching {
-    func match(
+public struct ExtrinsicSuccessEventMatcher: ExtrinsicEventsMatching {
+    public init() {}
+    
+    public func match(
         event: Event,
         using codingFactory: RuntimeCoderFactoryProtocol
     ) -> Bool {
@@ -37,8 +39,10 @@ struct ExtrinsicSuccessEventMatcher: ExtrinsicEventsMatching {
     }
 }
 
-struct ExtrinsicFailureEventMatcher: ExtrinsicEventsMatching {
-    func match(
+public struct ExtrinsicFailureEventMatcher: ExtrinsicEventsMatching {
+    public init() {}
+    
+    public func match(
         event: Event,
         using codingFactory: RuntimeCoderFactoryProtocol
     ) -> Bool {

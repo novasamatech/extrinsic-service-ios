@@ -4,11 +4,11 @@ import Operation_iOS
 import NovaCrypto
 import SubstrateMetadataHash
 
-final class ExtrinsicService {
+public final class ExtrinsicService {
     let operationFactory: ExtrinsicOperationFactoryProtocol
     let operationQueue: OperationQueue
 
-    init(
+    public init(
         chain: ChainProtocol,
         extrinsicVersion: Extrinsic.Version,
         runtimeRegistry: RuntimeCodingServiceProtocol,
@@ -86,7 +86,7 @@ final class ExtrinsicService {
 }
 
 extension ExtrinsicService: ExtrinsicServiceProtocol {
-    func estimateFee(
+    public func estimateFee(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -103,7 +103,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         )
     }
 
-    func estimateFee(
+    public func estimateFee(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -138,7 +138,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
-    func estimateFeeWithSplitter(
+    public func estimateFeeWithSplitter(
         _ splitter: ExtrinsicSplitting,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -186,7 +186,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
-    func submit(
+    public func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -216,7 +216,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
-    func submit(
+    public func submit(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -233,7 +233,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         )
     }
 
-    func submitWithTxSplitter(
+    public func submitWithTxSplitter(
         _ txSplitter: ExtrinsicSplitting,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -281,7 +281,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
-    func submitAndWatch(
+    public func submitAndWatch(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -310,11 +310,11 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
-    func cancelExtrinsicWatch(for identifier: UInt16) {
+    public func cancelExtrinsicWatch(for identifier: UInt16) {
         operationFactory.connection.cancelForIdentifier(identifier)
     }
 
-    func buildExtrinsic(
+    public func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,

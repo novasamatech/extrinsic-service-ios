@@ -2,13 +2,13 @@ import Foundation
 import SubstrateSdk
 import Operation_iOS
 
-final class ExtrinsicAccountOrigin {
+public final class ExtrinsicAccountOrigin {
     let connection: JSONRPCEngine
     let runtimeProvider: RuntimeCodingServiceProtocol
     let senderResolvingFactory: ExtrinsicSenderResolutionFactoryProtocol
     let nonceOperationFactory: NonceOperationFactoryProtocol
 
-    init(
+    public init(
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeCodingServiceProtocol,
         senderResolvingFactory: ExtrinsicSenderResolutionFactoryProtocol,
@@ -57,7 +57,7 @@ private extension ExtrinsicAccountOrigin {
 }
 
 extension ExtrinsicAccountOrigin: ExtrinsicOriginDefining {
-    func createOriginResolutionWrapper(
+    public func createOriginResolutionWrapper(
         for dependency: @escaping () throws -> ExtrinsicOriginDefinitionDependency,
         extrinsicVersion: Extrinsic.Version,
         purpose _: ExtrinsicOriginPurpose

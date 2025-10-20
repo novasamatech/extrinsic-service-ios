@@ -2,15 +2,15 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 
-enum ExtrinsicSignedOriginError: Error {
+public enum ExtrinsicSignedOriginError: Error {
     case noSigningAccountFound
 }
 
-final class ExtrinsicSignedOrigin {
+public final class ExtrinsicSignedOrigin {
     let runtimeProvider: RuntimeCodingServiceProtocol
     let signingWrapperFactory: SigningWrapperFactoryProtocol
 
-    init(
+    public init(
         runtimeProvider: RuntimeCodingServiceProtocol,
         signingWrapperFactory: SigningWrapperFactoryProtocol
     ) {
@@ -88,7 +88,7 @@ private extension ExtrinsicSignedOrigin {
 }
 
 extension ExtrinsicSignedOrigin: ExtrinsicOriginDefining {
-    func createOriginResolutionWrapper(
+    public func createOriginResolutionWrapper(
         for dependency: @escaping () throws -> ExtrinsicOriginDefinitionDependency,
         extrinsicVersion: Extrinsic.Version,
         purpose: ExtrinsicOriginPurpose

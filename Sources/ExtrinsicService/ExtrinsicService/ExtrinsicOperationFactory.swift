@@ -9,14 +9,14 @@ enum ExtrinsicOperationFactoryError: Error {
     case missingSender
 }
 
-final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
+public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
     let chain: ChainProtocol
     let customExtensions: [TransactionExtending]
     let eraOperationFactory: ExtrinsicEraOperationFactoryProtocol
     let metadataHashOperationFactory: MetadataHashOperationFactoryProtocol
     let extrinsicVersion: Extrinsic.Version
 
-    init(
+    public init(
         chain: ChainProtocol,
         extrinsicVersion: Extrinsic.Version,
         feeEstimationRegistry: ExtrinsicFeeEstimationRegistring,

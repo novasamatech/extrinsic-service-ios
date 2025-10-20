@@ -3,7 +3,7 @@ import SubstrateSdk
 import Operation_iOS
 import NovaCrypto
 
-protocol ExtrinsicServiceProtocol {
+public protocol ExtrinsicServiceProtocol {
     func estimateFee(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
@@ -74,7 +74,7 @@ protocol ExtrinsicServiceProtocol {
     )
 }
 
-extension ExtrinsicServiceProtocol {
+public extension ExtrinsicServiceProtocol {
     func estimateFee(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,

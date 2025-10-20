@@ -1,11 +1,11 @@
 import Foundation
 
-struct ExtrinsicMonitorSubmission {
-    let extrinsicSubmittedModel: ExtrinsicSubmittedModel
-    let status: SubstrateExtrinsicStatus
+public struct ExtrinsicMonitorSubmission {
+    public let extrinsicSubmittedModel: ExtrinsicSubmittedModel
+    public let status: SubstrateExtrinsicStatus
 }
 
-extension Result where Success == ExtrinsicMonitorSubmission {
+public extension Result where Success == ExtrinsicMonitorSubmission {
     func getSuccessSubmittedModel() throws -> ExtrinsicSubmittedModel {
         let submission = try get()
 

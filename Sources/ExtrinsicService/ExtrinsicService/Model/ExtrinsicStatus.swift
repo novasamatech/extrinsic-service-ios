@@ -1,16 +1,16 @@
 import Foundation
 import SubstrateSdk
 
-struct ExtrinsicStatusUpdate {
-    let extrinsicHash: String
-    let extrinsicStatus: ExtrinsicStatus
+public struct ExtrinsicStatusUpdate {
+    public let extrinsicHash: String
+    public let extrinsicStatus: ExtrinsicStatus
 
     init(extrinsicHash: String, extrinsicStatus: ExtrinsicStatus) {
         self.extrinsicHash = extrinsicHash
         self.extrinsicStatus = extrinsicStatus
     }
     
-    func getInBlockOrFinalizedHash() -> BlockHash? {
+    public func getInBlockOrFinalizedHash() -> BlockHash? {
         switch extrinsicStatus {
         case let .inBlock(blockHash):
             blockHash
@@ -22,7 +22,7 @@ struct ExtrinsicStatusUpdate {
     }
 }
 
-enum ExtrinsicStatus: Decodable {
+public enum ExtrinsicStatus: Decodable {
     case inBlock(String)
     case finalized(String)
     case finalityTimeout(String)
@@ -35,7 +35,7 @@ enum ExtrinsicStatus: Decodable {
         case finalityTimeout
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         if let value = try? values.decode(String.self, forKey: .inBlock) {
             self = .inBlock(value)

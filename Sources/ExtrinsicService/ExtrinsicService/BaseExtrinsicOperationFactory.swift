@@ -9,7 +9,7 @@ enum BaseExtrinsicOperationFactoryError: Error {
     case missingExtrinsic
 }
 
-class BaseExtrinsicOperationFactory {
+public class BaseExtrinsicOperationFactory {
     let feeEstimationRegistry: ExtrinsicFeeEstimationRegistring
     let runtimeRegistry: RuntimeCodingServiceProtocol
     let engine: JSONRPCEngine
@@ -42,9 +42,9 @@ class BaseExtrinsicOperationFactory {
 }
 
 extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
-    var connection: JSONRPCEngine { engine }
+    public var connection: JSONRPCEngine { engine }
 
-    func estimateFeeOperation(
+    public func estimateFeeOperation(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -100,7 +100,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
             .insertingTail(operation: wrapperOperation)
     }
 
-    func submit(
+    public func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,
@@ -185,7 +185,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
         )
     }
 
-    func buildExtrinsic(
+    public func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetIdProtocol?,

@@ -1,7 +1,7 @@
 import Foundation
 import SubstrateSdk
 
-protocol ExtrinsicFeeInstalling {
+public protocol ExtrinsicFeeInstalling {
     func installingFeeSettings(
         to builder: ExtrinsicBuilderProtocol,
         coderFactory: RuntimeCoderFactoryProtocol

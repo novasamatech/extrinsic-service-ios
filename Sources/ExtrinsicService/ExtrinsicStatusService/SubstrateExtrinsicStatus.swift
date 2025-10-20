@@ -1,14 +1,14 @@
 import Foundation
 import SubstrateSdk
 
-enum SubstrateExtrinsicStatus {
-    struct SuccessExtrinsic {
+public enum SubstrateExtrinsicStatus {
+    public struct SuccessExtrinsic {
         let extrinsicHash: ExtrinsicHash
         let blockHash: BlockHash
         let interestedEvents: [Event]
     }
 
-    struct FailedExtrinsic {
+    public struct FailedExtrinsic {
         let extrinsicHash: ExtrinsicHash
         let blockHash: BlockHash
         let error: Substrate.DispatchCallError
@@ -18,7 +18,7 @@ enum SubstrateExtrinsicStatus {
     case failure(FailedExtrinsic)
 }
 
-extension Result where Success == SubstrateExtrinsicStatus {
+public extension Result where Success == SubstrateExtrinsicStatus {
     func getSuccessExtrinsicStatus() throws -> SubstrateExtrinsicStatus.SuccessExtrinsic {
         let executionStatus = try get()
 

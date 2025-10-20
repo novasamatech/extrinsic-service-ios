@@ -2,16 +2,16 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 
-final class ExtrinsicCompoundOrigin {
+public final class ExtrinsicCompoundOrigin {
     let children: [ExtrinsicOriginDefining]
 
-    init(children: [ExtrinsicOriginDefining]) {
+    public init(children: [ExtrinsicOriginDefining]) {
         self.children = children
     }
 }
 
 extension ExtrinsicCompoundOrigin: ExtrinsicOriginDefining {
-    func createOriginResolutionWrapper(
+    public func createOriginResolutionWrapper(
         for dependency: @escaping () throws -> ExtrinsicOriginDefinitionDependency,
         extrinsicVersion: Extrinsic.Version,
         purpose: ExtrinsicOriginPurpose

@@ -1,7 +1,7 @@
 import Foundation
 import SubstrateSdk
 
-extension FeeIndexedExtrinsicResult {
+public extension FeeIndexedExtrinsicResult {
     func convertToTotalFee() -> FeeExtrinsicResult {
         do {
             let totalFee = try results.map(\.result).reduce(ExtrinsicFee.zero()) { accum, result in

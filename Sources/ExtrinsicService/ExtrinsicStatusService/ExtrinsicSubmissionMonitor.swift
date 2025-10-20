@@ -1,18 +1,19 @@
 import Foundation
 import Operation_iOS
 
-protocol ExtrinsicSubmitMonitorFactoryProtocol {
+public protocol ExtrinsicSubmitMonitorFactoryProtocol {
     func submitAndMonitorWrapper(
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         params: ExtrinsicSubmissionParams
-    ) -> CompoundOperationWrapper<SubstrateExtrinsicStatus>
+    ) -> CompoundOperationWrapper<ExtrinsicMonitorSubmission>
 }
 
-final class ExtrinsicSubmissionMonitorFactory {
+public final class ExtrinsicSubmissionMonitorFactory {
     struct SubmissionResult {
         let blockHash: String
         let extrinsicHash: String
+        let sender: ExtrinsicSenderResolution
     }
 
     let submissionService: ExtrinsicServiceProtocol
@@ -35,11 +36,11 @@ final class ExtrinsicSubmissionMonitorFactory {
 }
 
 extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtocol {
-    func submitAndMonitorWrapper(
+    public func submitAndMonitorWrapper(
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         params: ExtrinsicSubmissionParams
-    ) -> CompoundOperationWrapper<SubstrateExtrinsicStatus> {
+    ) -> CompoundOperationWrapper<ExtrinsicMonitorSubmission> {
         var subscriptionId: UInt16?
 
         let submissionOperation = AsyncClosureOperation<SubmissionResult>(operationClosure: { completionClosure in
@@ -78,8 +79,25 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
         }
 
         statusWrapper.addDependency(operations: [submissionOperation])
+        
+        let mappingOperation = ClosureOperation<ExtrinsicMonitorSubmission> {
+            let status = try statusWrapper.targetOperation.extractNoCancellableResultData()
+            let submission = try submissionOperation.extractNoCancellableResultData()
 
-        return statusWrapper.insertingHead(operations: [submissionOperation])
+            return ExtrinsicMonitorSubmission(
+                extrinsicSubmittedModel: ExtrinsicSubmittedModel(
+                    txHash: submission.extrinsicHash,
+                    sender: submission.sender
+                ),
+                status: status
+            )
+        }
+
+        mappingOperation.addDependency(statusWrapper.targetOperation)
+
+        return statusWrapper
+            .insertingHead(operations: [submissionOperation])
+            .insertingTail(operation: mappingOperation)
     }
 }
 
@@ -107,7 +125,8 @@ private extension ExtrinsicSubmissionMonitorFactory {
 
             let response = SubmissionResult(
                 blockHash: blockHash,
-                extrinsicHash: update.extrinsicHash
+                extrinsicHash: update.extrinsicHash,
+                sender: model.sender
             )
 
             completionClosure(.success(response))

@@ -2,12 +2,12 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 
-struct ExtrinsicEraParameters {
-    let blockNumber: BlockNumber
-    let extrinsicEra: Era
+public struct ExtrinsicEraParameters {
+    public let blockNumber: BlockNumber
+    public let extrinsicEra: Era
 }
 
-protocol ExtrinsicEraOperationFactoryProtocol {
+public protocol ExtrinsicEraOperationFactoryProtocol {
     func createOperation(
         from connection: JSONRPCEngine,
         runtimeService: RuntimeCodingServiceProtocol
