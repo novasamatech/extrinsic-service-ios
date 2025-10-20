@@ -2,6 +2,11 @@ import Foundation
 import SubstrateSdk
 
 public struct ExtrinsicSubmissionParams {
-    let feeAssetId: ChainAssetIdProtocol?
-    let eventsMatcher: ExtrinsicEventsMatching?
+    public let feeAssetId: ChainAssetIdProtocol?
+    public let eventsMatcher: ExtrinsicEventsMatching?
+    
+    public init(feeAssetId: ChainAssetIdProtocol?, eventsMatcher: ExtrinsicEventsMatching?) {
+        self.feeAssetId = feeAssetId
+        self.eventsMatcher = eventsMatcher
+    }
 }
