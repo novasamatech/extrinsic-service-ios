@@ -4,7 +4,7 @@ import SubstrateSdk
 
 enum ExtrinsicFeeEstimationRegistryError: Error {
     case unexpectedAsset(AssetProtocol)
-    case unexpectedChainAssetId(ChainAssetIdProtocol?)
+    case unexpectedChainAssetId(ChainAssetId?)
 }
 
 final class ExtrinsicFeeEstimationRegistry {
@@ -43,7 +43,7 @@ private extension ExtrinsicFeeEstimationRegistry {
 
 extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
     func createFeeEstimatingWrapper(
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
         guard let chainAssetId else {
@@ -68,7 +68,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
     }
 
     func createFeeInstallerWrapper(
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling> {
         let targetAssetId = chainAssetId ?? chain.utilityChainAssetId()

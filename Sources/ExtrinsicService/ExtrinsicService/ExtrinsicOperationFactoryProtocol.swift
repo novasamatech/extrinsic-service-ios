@@ -10,21 +10,21 @@ public protocol ExtrinsicOperationFactoryProtocol {
     func estimateFeeOperation(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         indexes: IndexSet
     ) -> CompoundOperationWrapper<FeeIndexedExtrinsicResult>
 
     func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         indexes: IndexSet
     ) -> CompoundOperationWrapper<SubmitIndexedExtrinsicResult>
 
     func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?
+        payingIn chainAssetId: ChainAssetId?
     ) -> CompoundOperationWrapper<ExtrinsicBuiltModel>
 }
 
@@ -32,7 +32,7 @@ public extension ExtrinsicOperationFactoryProtocol {
     func estimateFeeOperation(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         numberOfExtrinsics: Int
     ) -> CompoundOperationWrapper<FeeIndexedExtrinsicResult> {
         estimateFeeOperation(
@@ -46,7 +46,7 @@ public extension ExtrinsicOperationFactoryProtocol {
     func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         numberOfExtrinsics: Int
     ) -> CompoundOperationWrapper<SubmitIndexedExtrinsicResult> {
         submit(
@@ -60,7 +60,7 @@ public extension ExtrinsicOperationFactoryProtocol {
     func estimateFeeOperation(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?
+        payingIn chainAssetId: ChainAssetId?
     ) -> CompoundOperationWrapper<ExtrinsicFeeProtocol> {
         let wrapperClosure: ExtrinsicBuilderIndexedClosure = { builder, _ in
             try closure(builder)
@@ -93,7 +93,7 @@ public extension ExtrinsicOperationFactoryProtocol {
     func submit(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
     ) -> CompoundOperationWrapper<ExtrinsicSubmittedModel> {
         let wrapperClosure: ExtrinsicBuilderIndexedClosure = { builder, _ in
             try closure(builder)

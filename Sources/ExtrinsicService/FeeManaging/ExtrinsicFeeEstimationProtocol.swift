@@ -21,12 +21,12 @@ public protocol ExtrinsicFeeEstimating {
 
 public protocol ExtrinsicFeeEstimationRegistring {
     func createFeeEstimatingWrapper(
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol>
 
     func createFeeInstallerWrapper(
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling>
 }

@@ -159,7 +159,7 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
     override func createExtrinsicWrapper(
         customClosure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         purpose: ExtrinsicOriginPurpose,
         indexes: [Int]
     ) -> CompoundOperationWrapper<ExtrinsicsCreationResult> {

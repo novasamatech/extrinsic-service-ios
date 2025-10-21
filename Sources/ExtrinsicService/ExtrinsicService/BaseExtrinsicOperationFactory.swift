@@ -33,7 +33,7 @@ public class BaseExtrinsicOperationFactory {
     func createExtrinsicWrapper(
         customClosure _: @escaping ExtrinsicBuilderIndexedClosure,
         origin _: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         purpose _: ExtrinsicOriginPurpose,
         indexes _: [Int]
     ) -> CompoundOperationWrapper<ExtrinsicsCreationResult> {
@@ -47,7 +47,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
     public func estimateFeeOperation(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         indexes: IndexSet
     ) -> CompoundOperationWrapper<FeeIndexedExtrinsicResult> {
         let indexList = Array(indexes)
@@ -103,7 +103,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
     public func submit(
         _ closure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
         indexes: IndexSet
     ) -> CompoundOperationWrapper<SubmitIndexedExtrinsicResult> {
         let indexList = Array(indexes)
@@ -188,7 +188,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
     public func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
-        payingIn chainAssetId: ChainAssetIdProtocol?,
+        payingIn chainAssetId: ChainAssetId?,
     ) -> CompoundOperationWrapper<ExtrinsicBuiltModel> {
         let wrapperClosure: ExtrinsicBuilderIndexedClosure = { builder, _ in
             try closure(builder)
