@@ -2,19 +2,35 @@ import Foundation
 import SubstrateSdk
 
 public struct SubstrateBlockDetails {
-    let extrinsicsWithEvents: SubstrateExtrinsicsEvents
-    let inherentsEvents: SubstrateInherentsEvents
+    public let extrinsicsWithEvents: SubstrateExtrinsicsEvents
+    public let inherentsEvents: SubstrateInherentsEvents
+    
+    public init(extrinsicsWithEvents: SubstrateExtrinsicsEvents, inherentsEvents: SubstrateInherentsEvents) {
+        self.extrinsicsWithEvents = extrinsicsWithEvents
+        self.inherentsEvents = inherentsEvents
+    }
 }
 
 public struct SubstrateExtrinsicEvents {
-    let extrinsicHash: Data
-    let extrinsicData: Data
-    let eventRecords: [EventRecord]
+    public let extrinsicHash: Data
+    public let extrinsicData: Data
+    public let eventRecords: [EventRecord]
+    
+    public init(extrinsicHash: Data, extrinsicData: Data, eventRecords: [EventRecord]) {
+        self.extrinsicHash = extrinsicHash
+        self.extrinsicData = extrinsicData
+        self.eventRecords = eventRecords
+    }
 }
 
-typealias SubstrateExtrinsicsEvents = [SubstrateExtrinsicEvents]
+public typealias SubstrateExtrinsicsEvents = [SubstrateExtrinsicEvents]
 
 public struct SubstrateInherentsEvents {
-    let initialization: [Event]
-    let finalization: [Event]
+    public let initialization: [Event]
+    public let finalization: [Event]
+    
+    public init(initialization: [Event], finalization: [Event]) {
+        self.initialization = initialization
+        self.finalization = finalization
+    }
 }
