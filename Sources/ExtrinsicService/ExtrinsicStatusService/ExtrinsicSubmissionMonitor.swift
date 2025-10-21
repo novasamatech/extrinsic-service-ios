@@ -1,5 +1,6 @@
 import Foundation
 import Operation_iOS
+import SubstrateSdk
 
 public protocol ExtrinsicSubmitMonitorFactoryProtocol {
     func submitAndMonitorWrapper(
@@ -19,14 +20,14 @@ public final class ExtrinsicSubmissionMonitorFactory {
     let submissionService: ExtrinsicServiceProtocol
     let statusService: ExtrinsicStatusServiceProtocol
     let operationQueue: OperationQueue
-    let logger: LoggerProtocol
+    let logger: SDKLoggerProtocol
     let processingQueue = DispatchQueue(label: "io.extrinsic.service.monitor.\(UUID().uuidString)")
 
     init(
         submissionService: ExtrinsicServiceProtocol,
         statusService: ExtrinsicStatusServiceProtocol,
         operationQueue: OperationQueue,
-        logger: LoggerProtocol
+        logger: SDKLoggerProtocol
     ) {
         self.submissionService = submissionService
         self.statusService = statusService

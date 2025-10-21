@@ -8,7 +8,7 @@ public protocol ExtrinsicFeeEstimatorHostProtocol {
     var connection: JSONRPCEngine { get }
     var runtimeProvider: RuntimeCodingServiceProtocol { get }
     var operationQueue: OperationQueue { get }
-    var logger: LoggerProtocol? { get }
+    var logger: SDKLoggerProtocol? { get }
 }
 
 public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol {
@@ -17,7 +17,7 @@ public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol 
     public let connection: JSONRPCEngine
     public let runtimeProvider: RuntimeCodingServiceProtocol
     public let operationQueue: OperationQueue
-    public let logger: LoggerProtocol?
+    public let logger: SDKLoggerProtocol?
 
     public init(
         account: AccountProtocol,
@@ -25,7 +25,7 @@ public final class ExtrinsicFeeEstimatorHost: ExtrinsicFeeEstimatorHostProtocol 
         connection: JSONRPCEngine,
         runtimeProvider: RuntimeCodingServiceProtocol,
         operationQueue: OperationQueue,
-        logger: LoggerProtocol? = nil
+        logger: SDKLoggerProtocol? = nil
     ) {
         self.account = account
         self.chain = chain

@@ -14,13 +14,13 @@ public protocol BlockEventsQueryFactoryProtocol {
 public final class BlockEventsQueryFactory {
     let storageRequestFactory: StorageRequestFactoryProtocol
     let eventsRepository: SubstrateEventsRepositoryProtocol
-    let logger: LoggerProtocol?
+    let logger: SDKLoggerProtocol?
 
     public init(
         operationQueue: OperationQueue,
         eventsRepository: SubstrateEventsRepositoryProtocol = SubstrateEventsRepository(),
         storageRequestFactory: StorageRequestFactoryProtocol,
-        logger: LoggerProtocol? = nil
+        logger: SDKLoggerProtocol? = nil
     ) {
         self.storageRequestFactory = storageRequestFactory
         self.eventsRepository = eventsRepository
@@ -58,7 +58,7 @@ public final class BlockEventsQueryFactory {
         dependingOn eventsOperation: BaseOperation<StorageResponse<[EventRecord]>>,
         blockOperation: BaseOperation<SignedBlock>,
         repository: SubstrateEventsRepositoryProtocol,
-        logger: LoggerProtocol?
+        logger: SDKLoggerProtocol?
     ) -> BaseOperation<SubstrateBlockDetails> {
         ClosureOperation {
             let block = try blockOperation.extractNoCancellableResultData().block
