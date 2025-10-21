@@ -3,20 +3,23 @@ import BigInt
 import SubstrateSdk
 
 public struct ExtrinsicFeePayer: Equatable {
-    enum Reason: Equatable {
+    public enum Reason: Equatable {
         case delegate
     }
 
-    let accountId: AccountId?
-    let reason: Reason
+    public let accountId: AccountId?
+    public let reason: Reason
 
-    init(accountId: AccountId?, reason: Reason) {
+    public init(accountId: AccountId?, reason: Reason) {
         self.accountId = accountId
         self.reason = reason
     }
 
     init?(senderResolution: ExtrinsicSenderResolution) {
-        return nil
+        switch senderResolution {
+        case .none, .current:
+            return nil
+        }
     }
 }
 
