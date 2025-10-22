@@ -14,7 +14,7 @@ let package = Package(
             ]),
     ],
     dependencies: [
-        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", revision: "85fec966e88c588734ee21c34f6700146aeb370f"),
+        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", revision: "b29d35d2e09f80c2a94260bec1627a6264a0b496"),
         .package(url: "https://github.com/novasamatech/Keystore-iOS", exact: "1.0.1"),
         .package(url: "https://github.com/novasamatech/metadata-shortener-ios", exact: "0.2.1"),
     ],
