@@ -35,12 +35,12 @@ extension ExtrinsicFeeProtocol {
     }
 }
 
-struct ExtrinsicFee: ExtrinsicFeeProtocol {
-    let amount: BigUInt
-    let payer: ExtrinsicFeePayer?
-    let weight: Substrate.Weight
+public struct ExtrinsicFee: ExtrinsicFeeProtocol {
+    public let amount: BigUInt
+    public let payer: ExtrinsicFeePayer?
+    public let weight: Substrate.Weight
 
-    init?(
+    public init?(
         dispatchInfo: RuntimeDispatchInfo,
         payer: ExtrinsicFeePayer?
     ) {
@@ -53,7 +53,7 @@ struct ExtrinsicFee: ExtrinsicFeeProtocol {
         weight = dispatchInfo.weight
     }
 
-    init(
+    public init(
         amount: BigUInt,
         payer: ExtrinsicFeePayer?,
         weight: Substrate.Weight
