@@ -1,5 +1,5 @@
 {
-  "originHash" : "5e754bdc1da228e68461f773a45c82f87f7f16424e84637148245d20dab37c60",
+  "originHash" : "09f36f54edeeb2062fb4e99502612f662c820f316a3e75d6c46174b84b514036",
   "pins" : [
     {
       "identity" : "bigint",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/Foundation-iOS",
       "state" : {
-        "revision" : "d5b10fe07fb75ad84ad1a130d5f59895e06bb22e",
-        "version" : "1.3.0"
+        "revision" : "effe0751bc41f420c35aaa21dcc8abf9e3a27139",
+        "version" : "1.3.1"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/Operation-iOS",
       "state" : {
-        "revision" : "e41369975ae87e2d219bca6d7a85226216ffead8",
-        "version" : "2.3.0"
+        "revision" : "9795349c5ab2fad1774675237f77cc5b8afb21ad",
+        "version" : "2.3.1"
       }
     },
     {
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/substrate-sdk-ios",
       "state" : {
-        "revision" : "d94a426f0ea98aca2ade7910874394debfdf4e00",
-        "version" : "5.0.0"
+        "revision" : "df0e466dea7d9e00b2fb2d39dd51b8cedd08397c",
+        "version" : "5.1.0"
       }
     },
     {

@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "ExtrinsicPackage",
+    name: "ExtrinsicService",
     platforms: [.iOS(.v16)],
     products: [
         .library(
@@ -14,7 +14,7 @@ let package = Package(
             ]),
     ],
     dependencies: [
-        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.0.0"),
+        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.1.0"),
         .package(url: "https://github.com/novasamatech/Keystore-iOS", exact: "1.0.1"),
         .package(url: "https://github.com/novasamatech/metadata-shortener-ios", exact: "0.2.1"),
     ],
