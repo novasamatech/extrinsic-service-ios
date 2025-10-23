@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "ExtrinsicPackage",
+    name: "ExtrinsicService",
     platforms: [.iOS(.v16)],
     products: [
         .library(
