@@ -15,6 +15,11 @@ public struct ExtrinsicOriginDefinitionDependency {
 public struct ExtrinsicOriginDefinitionResponse {
     public let builders: [ExtrinsicBuilderProtocol]
     public let senderResolution: ExtrinsicSenderResolution
+    
+    public init(builders: [ExtrinsicBuilderProtocol], senderResolution: ExtrinsicSenderResolution) {
+        self.builders = builders
+        self.senderResolution = senderResolution
+    }
 }
 
 public protocol ExtrinsicOriginDefining {
