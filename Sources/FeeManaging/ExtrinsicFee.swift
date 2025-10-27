@@ -29,7 +29,7 @@ public protocol ExtrinsicFeeProtocol {
     var weight: Substrate.Weight { get }
 }
 
-extension ExtrinsicFeeProtocol {
+public extension ExtrinsicFeeProtocol {
     var amountForCurrentAccount: BigUInt? {
         payer == nil ? amount : nil
     }

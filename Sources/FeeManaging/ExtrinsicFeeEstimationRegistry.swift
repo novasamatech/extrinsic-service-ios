@@ -7,12 +7,12 @@ enum ExtrinsicFeeEstimationRegistryError: Error {
     case unexpectedChainAssetId(ChainAssetId?)
 }
 
-final class ExtrinsicFeeEstimationRegistry {
+public final class ExtrinsicFeeEstimationRegistry {
     let chain: ChainProtocol
     let estimatingWrapperFactory: ExtrinsicFeeEstimatingWrapperFactoryProtocol
     let feeInstallingWrapperFactory: ExtrinsicFeeInstallingFactoryProtocol
 
-    init(
+    public init(
         chain: ChainProtocol,
         estimatingWrapperFactory: ExtrinsicFeeEstimatingWrapperFactoryProtocol,
         feeInstallingWrapperFactory: ExtrinsicFeeInstallingFactoryProtocol
@@ -42,7 +42,7 @@ private extension ExtrinsicFeeEstimationRegistry {
 }
 
 extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
-    func createFeeEstimatingWrapper(
+    public func createFeeEstimatingWrapper(
         payingIn chainAssetId: ChainAssetId?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
@@ -67,7 +67,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
         )
     }
 
-    func createFeeInstallerWrapper(
+    public func createFeeInstallerWrapper(
         payingIn chainAssetId: ChainAssetId?,
         accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling> {
