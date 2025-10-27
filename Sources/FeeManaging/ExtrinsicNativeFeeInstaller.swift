@@ -1,10 +1,12 @@
 import Foundation
 import SubstrateSdk
 
-final class ExtrinsicNativeFeeInstaller {}
+public final class ExtrinsicNativeFeeInstaller {
+    public init() {}
+}
 
 extension ExtrinsicNativeFeeInstaller: ExtrinsicFeeInstalling {
-    func installingFeeSettings(
+    public func installingFeeSettings(
         to builder: ExtrinsicBuilderProtocol,
         coderFactory _: RuntimeCoderFactoryProtocol
     ) throws -> ExtrinsicBuilderProtocol {
