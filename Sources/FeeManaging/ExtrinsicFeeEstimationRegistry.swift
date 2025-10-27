@@ -54,7 +54,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
 
         guard
             chain.chainId == chainAssetId.chainId,
-            let asset = chain.asset(for: chainAssetId.assetId)
+            let asset = chain.assetInteface(for: chainAssetId.assetId)
         else {
             return CompoundOperationWrapper.createWithError(
                 ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(chainAssetId)
@@ -76,7 +76,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
         guard
             let targetAssetId,
             targetAssetId.chainId == chain.chainId,
-            let asset = chain.chainAsset(for: targetAssetId.assetId)
+            let asset = chain.chainAssetInterface(for: targetAssetId.assetId)
         else {
             return .createWithError(
                 ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(targetAssetId)

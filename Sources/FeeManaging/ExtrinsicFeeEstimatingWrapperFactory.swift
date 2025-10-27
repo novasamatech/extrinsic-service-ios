@@ -42,7 +42,7 @@ public final class ExtrinsicFeeEstimatingWrapperFactory: ExtrinsicFeeEstimatingW
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
         guard
-            let chainAsset = host.chain.chainAsset(for: asset.assetId),
+            let chainAsset = host.chain.chainAssetInterface(for: asset.assetId),
             let customFeeEstimator = customFeeEstimatorFactory.createCustomFeeEstimator(
                 for: chainAsset
             ) else {
