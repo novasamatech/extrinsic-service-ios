@@ -8,13 +8,13 @@ public enum ExtrinsicOriginPurpose {
 }
 
 public struct ExtrinsicOriginDefinitionDependency {
-    let builders: [ExtrinsicBuilderProtocol]
-    let senderResolution: ExtrinsicSenderResolution
+    public let builders: [ExtrinsicBuilderProtocol]
+    public let senderResolution: ExtrinsicSenderResolution
 }
 
 public struct ExtrinsicOriginDefinitionResponse {
-    let builders: [ExtrinsicBuilderProtocol]
-    let senderResolution: ExtrinsicSenderResolution
+    public let builders: [ExtrinsicBuilderProtocol]
+    public let senderResolution: ExtrinsicSenderResolution
 }
 
 public protocol ExtrinsicOriginDefining {
