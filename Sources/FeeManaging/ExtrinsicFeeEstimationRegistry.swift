@@ -7,12 +7,12 @@ enum ExtrinsicFeeEstimationRegistryError: Error {
     case unexpectedChainAssetId(ChainAssetId?)
 }
 
-final class ExtrinsicFeeEstimationRegistry {
+public final class ExtrinsicFeeEstimationRegistry {
     let chain: ChainProtocol
     let estimatingWrapperFactory: ExtrinsicFeeEstimatingWrapperFactoryProtocol
     let feeInstallingWrapperFactory: ExtrinsicFeeInstallingFactoryProtocol
 
-    init(
+    public init(
         chain: ChainProtocol,
         estimatingWrapperFactory: ExtrinsicFeeEstimatingWrapperFactoryProtocol,
         feeInstallingWrapperFactory: ExtrinsicFeeInstallingFactoryProtocol
@@ -42,7 +42,7 @@ private extension ExtrinsicFeeEstimationRegistry {
 }
 
 extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
-    func createFeeEstimatingWrapper(
+    public func createFeeEstimatingWrapper(
         payingIn chainAssetId: ChainAssetId?,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult
     ) -> CompoundOperationWrapper<ExtrinsicFeeEstimationResultProtocol> {
@@ -54,7 +54,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
 
         guard
             chain.chainId == chainAssetId.chainId,
-            let asset = chain.asset(for: chainAssetId.assetId)
+            let asset = chain.assetInteface(for: chainAssetId.assetId)
         else {
             return CompoundOperationWrapper.createWithError(
                 ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(chainAssetId)
@@ -67,7 +67,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
         )
     }
 
-    func createFeeInstallerWrapper(
+    public func createFeeInstallerWrapper(
         payingIn chainAssetId: ChainAssetId?,
         accountClosure: @escaping () throws -> AccountProtocol
     ) -> CompoundOperationWrapper<ExtrinsicFeeInstalling> {
@@ -76,7 +76,7 @@ extension ExtrinsicFeeEstimationRegistry: ExtrinsicFeeEstimationRegistring {
         guard
             let targetAssetId,
             targetAssetId.chainId == chain.chainId,
-            let asset = chain.chainAsset(for: targetAssetId.assetId)
+            let asset = chain.chainAssetInterface(for: targetAssetId.assetId)
         else {
             return .createWithError(
                 ExtrinsicFeeEstimationRegistryError.unexpectedChainAssetId(targetAssetId)

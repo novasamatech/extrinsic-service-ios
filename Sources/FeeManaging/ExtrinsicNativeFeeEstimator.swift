@@ -3,11 +3,11 @@ import Operation_iOS
 import SubstrateSdk
 import BigInt
 
-final class ExtrinsicNativeFeeEstimator {
+public final class ExtrinsicNativeFeeEstimator {
     let chain: ChainProtocol
     let operationQueue: OperationQueue
 
-    init(chain: ChainProtocol, operationQueue: OperationQueue) {
+    public init(chain: ChainProtocol, operationQueue: OperationQueue) {
         self.chain = chain
         self.operationQueue = operationQueue
     }
@@ -136,7 +136,7 @@ final class ExtrinsicNativeFeeEstimator {
 }
 
 extension ExtrinsicNativeFeeEstimator: ExtrinsicFeeEstimating {
-    func createFeeEstimatingWrapper(
+    public func createFeeEstimatingWrapper(
         connection: JSONRPCEngine,
         runtimeService: RuntimeCodingServiceProtocol,
         extrinsicCreatingResultClosure: @escaping () throws -> ExtrinsicsCreationResult

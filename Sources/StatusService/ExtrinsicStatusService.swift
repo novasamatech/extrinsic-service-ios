@@ -2,7 +2,7 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 
-protocol ExtrinsicStatusServiceProtocol {
+public protocol ExtrinsicStatusServiceProtocol {
     func fetchExtrinsicStatusForHash(
         _ extrinsicHash: String,
         inBlock blockHash: String,
@@ -16,7 +16,7 @@ enum ExtrinsicStatusServiceError: Error {
     case errorDecodingFailed
 }
 
-final class ExtrinsicStatusService {
+public final class ExtrinsicStatusService {
     let connection: JSONRPCEngine
     let runtimeProvider: RuntimeCodingServiceProtocol
     let eventsQueryFactory: BlockEventsQueryFactoryProtocol
@@ -137,7 +137,7 @@ private extension ExtrinsicStatusService {
 }
 
 extension ExtrinsicStatusService: ExtrinsicStatusServiceProtocol {
-    func fetchExtrinsicStatusForHash(
+    public func fetchExtrinsicStatusForHash(
         _ extrinsicHash: String,
         inBlock blockHash: String,
         matchingEvents: ExtrinsicEventsMatching?

@@ -29,18 +29,18 @@ public protocol ExtrinsicFeeProtocol {
     var weight: Substrate.Weight { get }
 }
 
-extension ExtrinsicFeeProtocol {
+public extension ExtrinsicFeeProtocol {
     var amountForCurrentAccount: BigUInt? {
         payer == nil ? amount : nil
     }
 }
 
-struct ExtrinsicFee: ExtrinsicFeeProtocol {
-    let amount: BigUInt
-    let payer: ExtrinsicFeePayer?
-    let weight: Substrate.Weight
+public struct ExtrinsicFee: ExtrinsicFeeProtocol {
+    public let amount: BigUInt
+    public let payer: ExtrinsicFeePayer?
+    public let weight: Substrate.Weight
 
-    init?(
+    public init?(
         dispatchInfo: RuntimeDispatchInfo,
         payer: ExtrinsicFeePayer?
     ) {
@@ -53,7 +53,7 @@ struct ExtrinsicFee: ExtrinsicFeeProtocol {
         weight = dispatchInfo.weight
     }
 
-    init(
+    public init(
         amount: BigUInt,
         payer: ExtrinsicFeePayer?,
         weight: Substrate.Weight

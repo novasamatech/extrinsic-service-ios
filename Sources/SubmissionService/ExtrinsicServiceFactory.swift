@@ -6,4 +6,9 @@ public protocol ExtrinsicServiceFactoryProtocol {
         from wallet: MetaAccountModelProtocol,
         chain: ChainProtocol
     ) throws -> ExtrinsicOperationFactoryProtocol
+    
+    func createExtrinsicService(
+        from wallet: MetaAccountModelProtocol,
+        chain: ChainProtocol
+    ) throws -> ExtrinsicServiceProtocol
 }

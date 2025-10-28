@@ -23,7 +23,7 @@ public final class ExtrinsicSubmissionMonitorFactory {
     let logger: SDKLoggerProtocol
     let processingQueue = DispatchQueue(label: "io.extrinsic.service.monitor.\(UUID().uuidString)")
 
-    init(
+    public init(
         submissionService: ExtrinsicServiceProtocol,
         statusService: ExtrinsicStatusServiceProtocol,
         operationQueue: OperationQueue,
