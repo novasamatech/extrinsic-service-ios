@@ -1,6 +1,7 @@
 import Foundation
 import SubstrateSdk
 import Operation_iOS
+import SDKLogger
 
 public protocol ExtrinsicFeeEstimatorHostProtocol {
     var account: AccountProtocol { get }

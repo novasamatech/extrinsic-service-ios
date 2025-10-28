@@ -2,6 +2,7 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 import SubstrateStorageQuery
+import SDKLogger
 
 public protocol BlockEventsQueryFactoryProtocol {
     func queryBlockDetailsWrapper(
