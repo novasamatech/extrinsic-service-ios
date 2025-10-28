@@ -1,6 +1,7 @@
 import Foundation
 import Operation_iOS
 import SubstrateSdk
+import SDKLogger
 
 public protocol ExtrinsicSubmitMonitorFactoryProtocol {
     func submitAndMonitorWrapper(

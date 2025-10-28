@@ -14,9 +14,10 @@ let package = Package(
             ]),
     ],
     dependencies: [
-        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.2.0"),
+        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.3.0"),
         .package(url: "https://github.com/novasamatech/Keystore-iOS", exact: "1.0.1"),
         .package(url: "https://github.com/novasamatech/metadata-shortener-ios", exact: "0.2.1"),
+        .package(url: "https://github.com/novasamatech/logger-ios", exact: "0.0.1")
     ],
     targets: [
         .target(
@@ -26,6 +27,7 @@ let package = Package(
                 .product(name: "SubstrateMetadataHash", package: "substrate-sdk-ios"),
                 .product(name: "SubstrateStorageQuery", package: "substrate-sdk-ios"),
                 .product(name: "MetadataShortenerApi", package: "metadata-shortener-ios"),
+                .product(name: "SDKLogger", package: "logger-ios"),
                 "Keystore-iOS"
             ]
         ),

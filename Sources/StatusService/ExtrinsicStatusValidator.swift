@@ -1,5 +1,6 @@
 import Foundation
 import SubstrateSdk
+import SDKLogger
 
 protocol ExtrinsicStatusValidating {
     func ensureSuccess(from events: [Event], codingFactory: RuntimeCoderFactoryProtocol) throws
