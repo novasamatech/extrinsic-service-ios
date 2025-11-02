@@ -1,5 +1,5 @@
 {
-  "originHash" : "6bc61e4c7da47e88ea4284b2196b6543d1e84d2c17e2f25bc41b86fe46998c83",
+  "originHash" : "c3c90bde278bc18c4c7f73a00ce55797aea60ac71260edaf89f3ab3f76a65c3d",
   "pins" : [
     {
       "identity" : "bigint",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/Crypto-iOS",
       "state" : {
-        "revision" : "648ed379cc7175479146655dda83e09dba87e0b0",
-        "version" : "0.3.0"
+        "revision" : "1b0a9d53cb171b7241ad238a64d83d0e16510d88",
+        "version" : "0.4.0"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/substrate-sdk-ios",
       "state" : {
-        "revision" : "d9af575dfff8214d70c7cf80897de5f7251e74b3",
-        "version" : "5.3.0"
+        "revision" : "93c32122977577fdd0e0803da670ce0f551eeea0",
+        "version" : "5.4.0"
       }
     },
     {
