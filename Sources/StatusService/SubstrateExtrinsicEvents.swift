@@ -4,10 +4,16 @@ import SubstrateSdk
 public struct SubstrateBlockDetails {
     public let extrinsicsWithEvents: SubstrateExtrinsicsEvents
     public let inherentsEvents: SubstrateInherentsEvents
+    public let blockNumber: BlockNumber
     
-    public init(extrinsicsWithEvents: SubstrateExtrinsicsEvents, inherentsEvents: SubstrateInherentsEvents) {
+    public init(
+        extrinsicsWithEvents: SubstrateExtrinsicsEvents,
+        inherentsEvents: SubstrateInherentsEvents,
+        blockNumber: BlockNumber
+    ) {
         self.extrinsicsWithEvents = extrinsicsWithEvents
         self.inherentsEvents = inherentsEvents
+        self.blockNumber = blockNumber
     }
 }
 

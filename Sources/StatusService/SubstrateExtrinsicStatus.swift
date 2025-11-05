@@ -5,12 +5,16 @@ public enum SubstrateExtrinsicStatus {
     public struct SuccessExtrinsic {
         public let extrinsicHash: ExtrinsicHash
         public let blockHash: BlockHash
+        public let blockNumber: BlockNumber
+        public let extrinsicIndex: ExtrinsicIndex
         public let interestedEvents: [Event]
     }
 
     public struct FailedExtrinsic {
         public let extrinsicHash: ExtrinsicHash
         public let blockHash: BlockHash
+        public let blockNumber: BlockNumber
+        public let extrinsicIndex: ExtrinsicIndex
         public let error: Substrate.DispatchCallError
     }
 
