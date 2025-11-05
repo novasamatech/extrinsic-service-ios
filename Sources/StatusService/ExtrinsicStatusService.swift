@@ -40,6 +40,8 @@ private extension ExtrinsicStatusService {
     func createSuccessStatus(
         from events: SubstrateExtrinsicEvents,
         input: ExtrinsicStatusServiceInput,
+        blockNumber: BlockNumber,
+        extrinsicIndex: ExtrinsicIndex,
         codingFactory: RuntimeCoderFactoryProtocol
     ) -> SubstrateExtrinsicStatus {
         let extString = input.extrinsicHash.toHex(includePrefix: true)
@@ -59,6 +61,8 @@ private extension ExtrinsicStatusService {
             .init(
                 extrinsicHash: extString,
                 blockHash: input.blockHash,
+                blockNumber: blockNumber,
+                extrinsicIndex: extrinsicIndex,
                 interestedEvents: events
             )
         )
@@ -67,6 +71,8 @@ private extension ExtrinsicStatusService {
     func createFailureStatus(
         from events: SubstrateExtrinsicEvents,
         input: ExtrinsicStatusServiceInput,
+        blockNumber: BlockNumber,
+        extrinsicIndex: ExtrinsicIndex,
         codingFactory: RuntimeCoderFactoryProtocol
     ) throws -> SubstrateExtrinsicStatus {
         let failMatcher = ExtrinsicFailureEventMatcher()
@@ -90,7 +96,15 @@ private extension ExtrinsicStatusService {
         }
 
         let extString = input.extrinsicHash.toHex(includePrefix: true)
-        return .failure(.init(extrinsicHash: extString, blockHash: input.blockHash, error: dispatchError))
+        return .failure(
+            .init(
+                extrinsicHash: extString,
+                blockHash: input.blockHash,
+                blockNumber: blockNumber,
+                extrinsicIndex: extrinsicIndex,
+                error: dispatchError
+            )
+        )
     }
 
     func createMatchingWrapper(
@@ -101,13 +115,15 @@ private extension ExtrinsicStatusService {
 
         let mappingOperation = ClosureOperation<SubstrateExtrinsicStatus> {
             let codingFactory = try codingFactoryOperation.extractNoCancellableResultData()
-            let extrinsicEventsList = try queryOperation.extractNoCancellableResultData().extrinsicsWithEvents
+            let blockDetails = try queryOperation.extractNoCancellableResultData()
+            let extrinsicEventsList = blockDetails.extrinsicsWithEvents
 
-            guard let extrinsicEvents = extrinsicEventsList
-                .first(where: { $0.extrinsicHash == input.extrinsicHash }) else {
+            guard let extrinsicIndex = extrinsicEventsList
+                .firstIndex(where: { $0.extrinsicHash == input.extrinsicHash }) else {
                 throw ExtrinsicStatusServiceError.extrinsicNotFound(input.extrinsicHash)
             }
-
+            // safe to get by index
+            let extrinsicEvents = extrinsicEventsList[extrinsicIndex]
             let successMatcher = ExtrinsicSuccessEventMatcher()
             let isSuccess = extrinsicEvents.eventRecords.contains(
                 where: { successMatcher.match(event: $0.event, using: codingFactory) }
@@ -117,12 +133,16 @@ private extension ExtrinsicStatusService {
                 return self.createSuccessStatus(
                     from: extrinsicEvents,
                     input: input,
+                    blockNumber: blockDetails.blockNumber,
+                    extrinsicIndex: ExtrinsicIndex(extrinsicIndex),
                     codingFactory: codingFactory
                 )
             } else {
                 return try self.createFailureStatus(
                     from: extrinsicEvents,
                     input: input,
+                    blockNumber: blockDetails.blockNumber,
+                    extrinsicIndex: ExtrinsicIndex(extrinsicIndex),
                     codingFactory: codingFactory
                 )
             }

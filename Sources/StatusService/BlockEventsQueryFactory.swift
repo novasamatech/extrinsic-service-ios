@@ -65,7 +65,12 @@ public final class BlockEventsQueryFactory {
             let block = try blockOperation.extractNoCancellableResultData().block
 
             logger?.debug("Block received: \(block)")
-
+            
+            guard let blockNumber = BlockNumber(hex: block.header.number,) else {
+                logger?.error("Block number invalid")
+                throw ExtrinsicStatusServiceError.errorDecodingFailed
+            }
+            
             let eventRecords = try eventsOperation.extractNoCancellableResultData().value ?? []
 
             logger?.debug("Events received: \(eventRecords)")
@@ -75,7 +80,8 @@ public final class BlockEventsQueryFactory {
 
             return SubstrateBlockDetails(
                 extrinsicsWithEvents: extrinsicsWithEvents,
-                inherentsEvents: inherentEvents
+                inherentsEvents: inherentEvents,
+                blockNumber: blockNumber
             )
         }
     }
@@ -116,5 +122,18 @@ extension BlockEventsQueryFactory: BlockEventsQueryFactoryProtocol {
             .insertingHead(operations: [codingFactoryOperation])
             .insertingTail(operation: blockFetchOperation)
             .insertingTail(operation: parsingOperation)
+    }
+}
+
+// TODO: Worth moving to SubstrateSdk
+private extension FixedWidthInteger {
+    init?(hex: String) {
+        let prefix = "0x"
+        guard hex.hasPrefix(prefix) else {
+            self.init(hex, radix: 16)
+            return
+        }
+        let filtered = String(hex.suffix(hex.count - prefix.count))
+        self.init(filtered, radix: 16)
     }
 }
