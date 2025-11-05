@@ -125,6 +125,7 @@ extension BlockEventsQueryFactory: BlockEventsQueryFactoryProtocol {
     }
 }
 
+// TODO: Worth moving to SubstrateSdk
 private extension FixedWidthInteger {
     init?(hex: String) {
         let prefix = "0x"
