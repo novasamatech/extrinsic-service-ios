@@ -79,7 +79,7 @@ private extension ExtrinsicSignedOrigin {
 
             switch purpose {
             case .feeEstimation:
-                return DummySigner()
+                return try DummySigner(signatureType: account.signatureType)
             case .submission:
                 return signingWrapperFactory.createSigningWrapper(for: account)
             }
