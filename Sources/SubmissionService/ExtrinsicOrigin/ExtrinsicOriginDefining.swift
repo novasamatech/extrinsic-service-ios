@@ -7,25 +7,40 @@ public enum ExtrinsicOriginPurpose {
     case submission
 }
 
+public struct ExtrinsicFeePaymentDependency {
+    public let registry: ExtrinsicFeeEstimationRegistring
+    public let feeAssetId: ChainAssetId?
+}
+
 public struct ExtrinsicOriginDefinitionDependency {
     public let builders: [ExtrinsicBuilderProtocol]
     public let senderResolution: ExtrinsicSenderResolution
-    public let feeAssetId: ChainAssetId?
+    public let feePayment: ExtrinsicFeePaymentDependency
+    
+    public init(
+        builders: [ExtrinsicBuilderProtocol],
+        senderResolution: ExtrinsicSenderResolution,
+        feePayment: ExtrinsicFeePaymentDependency
+    ) {
+        self.builders = builders
+        self.senderResolution = senderResolution
+        self.feePayment = feePayment
+    }
 }
 
 public struct ExtrinsicOriginDefinitionResponse {
     public let builders: [ExtrinsicBuilderProtocol]
     public let senderResolution: ExtrinsicSenderResolution
-    public let feeAssetId: ChainAssetId?
+    public let feePayment: ExtrinsicFeePaymentDependency
     
     public init(
         builders: [ExtrinsicBuilderProtocol],
         senderResolution: ExtrinsicSenderResolution,
-        feeAssetId: ChainAssetId?
+        feePayment: ExtrinsicFeePaymentDependency
     ) {
         self.builders = builders
         self.senderResolution = senderResolution
-        self.feeAssetId = feeAssetId
+        self.feePayment = feePayment
     }
 }
 

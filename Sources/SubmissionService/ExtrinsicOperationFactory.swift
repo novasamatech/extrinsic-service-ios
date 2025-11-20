@@ -172,13 +172,16 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
         partialBuildersWrapper.addDependency(operations: [codingFactoryOperation])
 
         let originResolvingWrapper = origin.createOriginResolutionWrapper(
-            for: {
+            for: { [feeEstimationRegistry] in
                 let builders = try partialBuildersWrapper.targetOperation.extractNoCancellableResultData()
 
                 return ExtrinsicOriginDefinitionDependency(
                     builders: builders,
                     senderResolution: .none,
-                    feeAssetId: chainAssetId
+                    feePayment: ExtrinsicFeePaymentDependency(
+                        registry: feeEstimationRegistry,
+                        feeAssetId: chainAssetId
+                    )
                 )
             },
             extrinsicVersion: extrinsicVersion,

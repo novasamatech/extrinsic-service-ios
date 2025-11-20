@@ -57,7 +57,7 @@ private extension ExtrinsicSignedOrigin {
             return ExtrinsicOriginDefinitionResponse(
                 builders: resultBuilders,
                 senderResolution: senderResolution,
-                feeAssetId: dependencies.feeAssetId
+                feePayment: dependencies.feePayment
             )
         }
     }

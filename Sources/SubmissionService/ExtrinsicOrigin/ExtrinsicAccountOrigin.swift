@@ -52,7 +52,7 @@ private extension ExtrinsicAccountOrigin {
             return ExtrinsicOriginDefinitionResponse(
                 builders: resultBuilders,
                 senderResolution: partialResponse.senderResolution,
-                feeAssetId: partialResponse.feeAssetId
+                feePayment: partialResponse.feePayment
             )
         }
     }
@@ -85,7 +85,7 @@ extension ExtrinsicAccountOrigin: ExtrinsicOriginDefining {
             return ExtrinsicOriginDefinitionResponse(
                 builders: newBuilders,
                 senderResolution: senderResolution,
-                feeAssetId: dependencyModel.feeAssetId
+                feePayment: dependencyModel.feePayment
             )
         }
 
