@@ -10,15 +10,22 @@ public enum ExtrinsicOriginPurpose {
 public struct ExtrinsicOriginDefinitionDependency {
     public let builders: [ExtrinsicBuilderProtocol]
     public let senderResolution: ExtrinsicSenderResolution
+    public let feeAssetId: ChainAssetId?
 }
 
 public struct ExtrinsicOriginDefinitionResponse {
     public let builders: [ExtrinsicBuilderProtocol]
     public let senderResolution: ExtrinsicSenderResolution
+    public let feeAssetId: ChainAssetId?
     
-    public init(builders: [ExtrinsicBuilderProtocol], senderResolution: ExtrinsicSenderResolution) {
+    public init(
+        builders: [ExtrinsicBuilderProtocol],
+        senderResolution: ExtrinsicSenderResolution,
+        feeAssetId: ChainAssetId?
+    ) {
         self.builders = builders
         self.senderResolution = senderResolution
+        self.feeAssetId = feeAssetId
     }
 }
 

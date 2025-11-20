@@ -134,19 +134,14 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
     private func createExtrinsicsOperation(
         dependingOn originResultOperation: BaseOperation<ExtrinsicOriginDefinitionResponse>,
-        feeInstallerOperation: BaseOperation<ExtrinsicFeeInstalling>,
         codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>
     ) -> BaseOperation<ExtrinsicsCreationResult> {
         ClosureOperation<ExtrinsicsCreationResult> {
-            let feeInstaller = try feeInstallerOperation.extractNoCancellableResultData()
             let codingFactory = try codingFactoryOperation.extractNoCancellableResultData()
             let response = try originResultOperation.extractNoCancellableResultData()
 
             let extrinsics: [Data] = try response.builders.map { builder in
-                try feeInstaller.installingFeeSettings(
-                    to: builder,
-                    coderFactory: codingFactory
-                ).build(
+                try builder.build(
                     using: codingFactory,
                     metadata: codingFactory.metadata
                 )
@@ -180,38 +175,27 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
             for: {
                 let builders = try partialBuildersWrapper.targetOperation.extractNoCancellableResultData()
 
-                return ExtrinsicOriginDefinitionDependency(builders: builders, senderResolution: .none)
+                return ExtrinsicOriginDefinitionDependency(
+                    builders: builders,
+                    senderResolution: .none,
+                    feeAssetId: chainAssetId
+                )
             },
             extrinsicVersion: extrinsicVersion,
             purpose: purpose
         )
 
         originResolvingWrapper.addDependency(wrapper: partialBuildersWrapper)
-        
-        let feeInstallerWrapper = feeEstimationRegistry.createFeeInstallerWrapper(payingIn: chainAssetId) {
-            let resolver = try originResolvingWrapper.targetOperation.extractNoCancellableResultData()
-            
-            guard let account = resolver.senderResolution.account else {
-                throw ExtrinsicOperationFactoryError.missingSender
-            }
-            
-            return account
-        }
-
-        feeInstallerWrapper.addDependency(wrapper: originResolvingWrapper)
 
         let extrinsicOperation = createExtrinsicsOperation(
             dependingOn: originResolvingWrapper.targetOperation,
-            feeInstallerOperation: feeInstallerWrapper.targetOperation,
             codingFactoryOperation: codingFactoryOperation
         )
 
         extrinsicOperation.addDependency(originResolvingWrapper.targetOperation)
-        extrinsicOperation.addDependency(feeInstallerWrapper.targetOperation)
         extrinsicOperation.addDependency(codingFactoryOperation)
 
-        return feeInstallerWrapper
-            .insertingHead(operations: originResolvingWrapper.allOperations)
+        return originResolvingWrapper
             .insertingHead(operations: partialBuildersWrapper.allOperations)
             .insertingHead(operations: [codingFactoryOperation])
             .insertingTail(operation: extrinsicOperation)
