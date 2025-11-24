@@ -2,10 +2,6 @@ import Foundation
 import Operation_iOS
 import SubstrateSdk
 
-public enum ExtrinsicSignedOriginError: Error {
-    case noSigningAccountFound
-}
-
 public final class ExtrinsicSignedOrigin {
     let runtimeProvider: RuntimeCodingServiceProtocol
     let signingWrapperFactory: SigningWrapperFactoryProtocol
@@ -36,7 +32,7 @@ private extension ExtrinsicSignedOrigin {
 
             let resultBuilders: [ExtrinsicBuilderProtocol] = try builders.map { partialBuilder in
                 guard let account = senderResolution.account else {
-                    throw ExtrinsicSignedOriginError.noSigningAccountFound
+                    throw ExtrinsicModifierError.noAccountFound
                 }
 
                 let builder = partialBuilder.with(
@@ -60,7 +56,8 @@ private extension ExtrinsicSignedOrigin {
 
             return ExtrinsicOriginDefinitionResponse(
                 builders: resultBuilders,
-                senderResolution: senderResolution
+                senderResolution: senderResolution,
+                feePayment: dependencies.feePayment
             )
         }
     }
@@ -74,7 +71,7 @@ private extension ExtrinsicSignedOrigin {
             let dependencies = try dependencyOperation.extractNoCancellableResultData()
 
             guard let account = dependencies.senderResolution.account else {
-                throw ExtrinsicSignedOriginError.noSigningAccountFound
+                throw ExtrinsicModifierError.noAccountFound
             }
 
             switch purpose {

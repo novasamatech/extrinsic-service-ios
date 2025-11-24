@@ -21,7 +21,8 @@ extension ExtrinsicCompoundOrigin: ExtrinsicOriginDefining {
 
             return ExtrinsicOriginDefinitionResponse(
                 builders: dep.builders,
-                senderResolution: dep.senderResolution
+                senderResolution: dep.senderResolution,
+                feePayment: dep.feePayment
             )
         })
 
@@ -32,7 +33,8 @@ extension ExtrinsicCompoundOrigin: ExtrinsicOriginDefining {
 
                     return ExtrinsicOriginDefinitionDependency(
                         builders: response.builders,
-                        senderResolution: response.senderResolution
+                        senderResolution: response.senderResolution,
+                        feePayment: response.feePayment
                     )
 
                 },
