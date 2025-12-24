@@ -1,5 +1,5 @@
 {
-  "originHash" : "d54bef255ff960d119eef8ee30888471a3a6f42237d1d6d3e229caa8ea61d66a",
+  "originHash" : "dd26ae88bc8eaaece8dbebb5983af7f56eb1c692f6165e8f97e6e20914d98ed0",
   "pins" : [
     {
       "identity" : "bigint",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/novasamatech/substrate-sdk-ios",
       "state" : {
-        "revision" : "a2ab0a7547824eb7d75420290d1c3abd2736ac88",
-        "version" : "5.6.0"
+        "revision" : "9d069e2871f3d9e278f3c746307b0a839dcd7801",
+        "version" : "5.6.1"
       }
     },
     {
