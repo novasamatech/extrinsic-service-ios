@@ -111,37 +111,78 @@ private extension ExtrinsicSubmissionMonitorFactory {
     ) {
         switch result {
         case let .success(model):
-            let update = model.statusUpdate
-            logger.debug("Extrinsic notification status update: \(update.extrinsicStatus)")
+            logger.debug("Extrinsic notification status update: \(model.statusUpdate)")
 
-            guard let blockHash = update.getInBlockOrFinalizedHash() else {
-                logger.warning("Extrinsic notification skipped")
+            if handleInBlockOrFinalized(
+                from: model,
+                subscriptionId: subscriptionId,
+                completionClosure: completionClosure
+            ) {
                 return
             }
-
-            if let subscriptionId {
-                submissionService.cancelExtrinsicWatch(for: subscriptionId)
-            } else {
-                logger.warning("Missing subscription id")
+            
+            if handleFinalFailureStatus(
+                from: model,
+                subscriptionId: subscriptionId,
+                completionClosure: completionClosure
+            ) {
+                return
             }
-
-            let response = SubmissionResult(
-                blockHash: blockHash,
-                extrinsicHash: update.extrinsicHash,
-                sender: model.sender
-            )
-
-            completionClosure(.success(response))
+            
+            logger.debug("Skiping extrinsic status")
+            
         case let .failure(error):
-            logger.error("Extrinsic notification error: \(error.localizedDescription)")
+            logger.error("Extrinsic notification error: \(error)")
 
-            if let subscriptionId {
-                submissionService.cancelExtrinsicWatch(for: subscriptionId)
-            } else {
-                logger.warning("Missing subscription id")
-            }
+            stopSubscription(for: subscriptionId)
 
             completionClosure(.failure(error))
+        }
+    }
+    
+    func handleInBlockOrFinalized(
+        from model: ExtrinsicSubscribedStatusModel,
+        subscriptionId: UInt16?,
+        completionClosure: (Result<SubmissionResult, Error>) -> Void
+    ) -> Bool {
+        guard let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() else {
+            return false
+        }
+
+        stopSubscription(for: subscriptionId)
+
+        let response = SubmissionResult(
+            blockHash: blockHash,
+            extrinsicHash: model.statusUpdate.extrinsicHash,
+            sender: model.sender
+        )
+
+        completionClosure(.success(response))
+        
+        return true
+    }
+    
+    func handleFinalFailureStatus(
+        from model: ExtrinsicSubscribedStatusModel,
+        subscriptionId: UInt16?,
+        completionClosure: (Result<SubmissionResult, Error>) -> Void
+    ) -> Bool {
+        guard let failure = model.statusUpdate.getFinalExtrinsicFailure() else {
+            return false
+        }
+        
+        stopSubscription(for: subscriptionId)
+        
+        completionClosure(.failure(failure))
+        
+        return true
+    }
+    
+    func stopSubscription(for subscriptionId: UInt16?) {
+        if let subscriptionId {
+            submissionService.cancelExtrinsicWatch(for: subscriptionId)
+        } else {
+            logger.warning("Missing subscription id")
         }
     }
 
