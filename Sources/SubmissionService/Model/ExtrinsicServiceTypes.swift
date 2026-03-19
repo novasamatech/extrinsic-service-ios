@@ -72,6 +72,14 @@ public extension ExtrinsicRetriableResult where R == ExtrinsicSubmittedModel {
 public struct ExtrinsicSubmittedModel {
     public let txHash: String
     public let sender: ExtrinsicSenderResolution
+
+    public init(
+        txHash: String,
+        sender: ExtrinsicSenderResolution
+    ) {
+        self.txHash = txHash
+        self.sender = sender
+    }
 }
 
 public struct ExtrinsicSubscribedStatusModel {
