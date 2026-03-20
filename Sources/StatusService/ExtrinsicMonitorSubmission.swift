@@ -3,6 +3,14 @@ import Foundation
 public struct ExtrinsicMonitorSubmission {
     public let extrinsicSubmittedModel: ExtrinsicSubmittedModel
     public let status: SubstrateExtrinsicStatus
+
+    public init(
+        extrinsicSubmittedModel: ExtrinsicSubmittedModel,
+        status: SubstrateExtrinsicStatus
+    ) {
+        self.extrinsicSubmittedModel = extrinsicSubmittedModel
+        self.status = status
+    }
 }
 
 public extension Result where Success == ExtrinsicMonitorSubmission {
