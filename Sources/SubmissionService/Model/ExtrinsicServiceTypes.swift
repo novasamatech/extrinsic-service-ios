@@ -116,10 +116,11 @@ public typealias ExtrinsicBuiltClosure = (ExtrinsicBuiltResult) -> Void
 
 public typealias ExtrinsicSubscriptionIdClosure = (UInt16) -> Bool
 public typealias ExtrinsicSubscriptionStatusClosure = (Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
+public typealias ExtrinsicStatusUpdateClosure = (Result<ExtrinsicStatusUpdate, Error>) -> Void
 
 public typealias ExtrinsicBuilderClosure = (ExtrinsicBuilderProtocol) throws -> (ExtrinsicBuilderProtocol)
 public typealias ExtrinsicBuilderIndexedClosure = (ExtrinsicBuilderProtocol, Int) throws -> (ExtrinsicBuilderProtocol)
 
 public typealias ExtrinsicsCreationResult = (extrinsics: [Data], sender: ExtrinsicSenderResolution)
 
-public typealias ExtrinsicSubscriptionUpdate = JSONRPCSubscriptionUpdate<ExtrinsicStatus>
+public typealias ExtrinsicSubscriptionUpdate = JSONRPCSubscriptionUpdate<RemoteExtrinsicStatus>

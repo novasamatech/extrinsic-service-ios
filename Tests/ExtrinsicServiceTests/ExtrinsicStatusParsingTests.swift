@@ -1,9 +1,8 @@
 import Testing
 import Foundation
-import SubstrateSdk
 @testable import ExtrinsicService
 
-@Suite("Message Timestamp Formatter Tests")
+@Suite("Extrinsic Status Parsing Tests")
 final class ExtrinsicStatusParsingTests {
     @Test func canParseFuture() async throws {
         let json = """
@@ -97,11 +96,11 @@ final class ExtrinsicStatusParsingTests {
 }
 
 private extension ExtrinsicStatusParsingTests {
-    func decode(_ json: String) throws -> ExtrinsicStatus {
+    func decode(_ json: String) throws -> RemoteExtrinsicStatus {
         let data = Data(json.utf8)
         let decoder = JSONDecoder()
         let msg = try decoder.decode(
-            JSONRPCSubscriptionUpdate<ExtrinsicStatus>.self,
+            ExtrinsicSubscriptionUpdate.self,
             from: data
         )
         return msg.params.result
