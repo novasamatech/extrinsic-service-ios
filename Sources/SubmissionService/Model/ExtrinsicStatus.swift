@@ -9,34 +9,47 @@ public struct ExtrinsicStatusUpdate {
         self.extrinsicHash = extrinsicHash
         self.extrinsicStatus = extrinsicStatus
     }
-    
+
     public func getInBlockOrFinalizedHash() -> BlockHash? {
-        switch extrinsicStatus {
+        guard case let .onChain(remoteStatus) = extrinsicStatus else {
+            return nil
+        }
+
+        switch remoteStatus {
         case let .inBlock(blockHash):
-            blockHash
+            return blockHash
         case let .finalized(blockHash):
-            blockHash
+            return blockHash
         default:
-            nil
+            return nil
         }
     }
-    
+
     public func getFinalExtrinsicFailure() -> FinalExtrinsicStatusError? {
-        switch extrinsicStatus {
+        guard case let .onChain(remoteStatus) = extrinsicStatus else {
+            return nil
+        }
+
+        switch remoteStatus {
         case .invalid:
-            .invalid
+            return .invalid
         case .dropped:
-            .dropped
+            return .dropped
         case .finalityTimeout:
-            .finalityTimeout
+            return .finalityTimeout
         default:
-            nil
+            return nil
         }
     }
 }
 
+public enum ExtrinsicStatus {
+    case created
+    case onChain(RemoteExtrinsicStatus)
+}
+
 // https://paritytech.github.io/polkadot-sdk/master/src/sc_transaction_pool_api/lib.rs.html#130
-public enum ExtrinsicStatus: Decodable, Equatable {
+public enum RemoteExtrinsicStatus: Decodable, Equatable {
     case future // waiting for lesser nonce
     case ready // ready for execution
     case broadcast([String]) // broadcasted to peers
@@ -52,7 +65,7 @@ public enum ExtrinsicStatus: Decodable, Equatable {
     private enum ValueKeys: String {
         case future, ready, dropped, invalid
     }
-    
+
     private enum DictKeys: String, CodingKey {
         case broadcast, inBlock, retracted, finalityTimeout, finalized, usurped
     }

@@ -45,13 +45,26 @@ public final class ExtrinsicService {
         do {
             let extrinsic = builtExtrinsic.extrinsic
             let extrinsicHash = try Data(hexString: extrinsic).blake2b32().toHex(includePrefix: true)
+
+            let localModel = ExtrinsicSubscribedStatusModel(
+                statusUpdate: ExtrinsicStatusUpdate(
+                    extrinsicHash: extrinsicHash,
+                    extrinsicStatus: .created
+                ),
+                sender: builtExtrinsic.sender
+            )
+
+            queue.async {
+                notificationClosure(.success(localModel))
+            }
+
             let updateClosure: (ExtrinsicSubscriptionUpdate) -> Void = { update in
                 let status = update.params.result
 
                 let model = ExtrinsicSubscribedStatusModel(
                     statusUpdate: ExtrinsicStatusUpdate(
                         extrinsicHash: extrinsicHash,
-                        extrinsicStatus: status
+                        extrinsicStatus: .onChain(status)
                     ),
                     sender: builtExtrinsic.sender
                 )

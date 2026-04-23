@@ -59,6 +59,7 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
                     self.handleNotification(
                         with: result,
                         subscriptionId: subscriptionId,
+                        params: params,
                         completionClosure: completionClosure
                     )
                 }
@@ -107,8 +108,11 @@ private extension ExtrinsicSubmissionMonitorFactory {
     func handleNotification(
         with result: Result<ExtrinsicSubscribedStatusModel, Error>,
         subscriptionId: UInt16?,
+        params: ExtrinsicSubmissionParams,
         completionClosure: (Result<SubmissionResult, Error>) -> Void
     ) {
+        params.statusNotificationClosure?(result.map { $0.statusUpdate })
+
         switch result {
         case let .success(model):
             logger.debug("Extrinsic notification status update: \(model.statusUpdate)")
@@ -120,7 +124,7 @@ private extension ExtrinsicSubmissionMonitorFactory {
             ) {
                 return
             }
-            
+
             if handleFinalFailureStatus(
                 from: model,
                 subscriptionId: subscriptionId,
@@ -128,9 +132,9 @@ private extension ExtrinsicSubmissionMonitorFactory {
             ) {
                 return
             }
-            
+
             logger.debug("Skiping extrinsic status")
-            
+
         case let .failure(error):
             logger.error("Extrinsic notification error: \(error)")
 
