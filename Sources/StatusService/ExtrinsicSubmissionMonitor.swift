@@ -46,6 +46,118 @@ public final class ExtrinsicSubmissionMonitorFactory {
 
 extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtocol {
     public func submitAndMonitorWrapper(
+        extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        indexes: IndexSet,
+        params: ExtrinsicSubmissionParams
+    ) -> CompoundOperationWrapper<[ExtrinsicMonitorSubmission]> {
+        guard !indexes.isEmpty else {
+            return .createWithResult([])
+        }
+        
+        let indexList = Array(indexes)
+        var subscriptionIds: [Int: UInt16] = [:]
+
+        
+        
+        let submissionOperation = AsyncClosureOperation<[SubmissionResult]>(operationClosure: { completionClosure in
+            var pendingIndexes = Set(indexList)
+            var collectedResults: [Int: SubmissionResult] = [:]
+            var done = false
+
+            self.submissionService.submitAndWatch(
+                extrinsicBuilderClosure,
+                origin: origin,
+                payingIn: params.feeAssetId,
+                runningIn: self.processingQueue,
+                indexes: indexes,
+                subscriptionIdClosure: { index, subscriptionId in
+                    subscriptionIds[index] = subscriptionId
+                    return true
+                },
+                notificationClosure: { index, result in
+                    guard !done else { return }
+
+                    params.statusNotificationClosure?(result.map { $0.statusUpdate })
+
+                    switch result {
+                    case let .success(model):
+                        self.logger.debug("Extrinsic[\(index)] notification status update: \(model.statusUpdate)")
+
+                        if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
+                            self.stopSubscription(for: subscriptionIds[index])
+
+                            collectedResults[index] = SubmissionResult(
+                                blockHash: blockHash,
+                                extrinsicHash: model.statusUpdate.extrinsicHash,
+                                sender: model.sender
+                            )
+                            pendingIndexes.remove(index)
+
+                            guard pendingIndexes.isEmpty else {
+                                return
+                            }
+                            done = true
+                            let orderedResults = indexList.compactMap { collectedResults[$0] }
+                            completionClosure(.success(orderedResults))
+                        }
+
+                        guard let failure = model.statusUpdate.getFinalExtrinsicFailure() else {
+                            self.logger.debug("Skipping extrinsic[\(index)] status")
+                            return
+                        }
+                        done = true
+                        subscriptionIds.values.forEach { self.stopSubscription(for: $0) }
+                        completionClosure(.failure(failure))
+                    case let .failure(error):
+                        self.logger.error("Extrinsic[\(index)] notification error: \(error)")
+                        done = true
+                        subscriptionIds.values.forEach { self.stopSubscription(for: $0) }
+                        completionClosure(.failure(error))
+                    }
+                }
+            )
+        }, cancelationClosure: {
+            self.processingQueue.async {
+                subscriptionIds.values.forEach { id in
+                    self.submissionService.cancelExtrinsicWatch(for: id)
+                }
+            }
+        })
+
+        let statusWrapper: CompoundOperationWrapper<[SubstrateExtrinsicStatus]>
+        statusWrapper = OperationCombiningService.compoundNonOptionalWrapper(
+            operationManager: OperationManager(operationQueue: operationQueue)
+        ) {
+            let responses = try submissionOperation.extractNoCancellableResultData()
+            return self.createAggregateStatusWrapper(for: responses, params: params)
+        }
+
+        statusWrapper.addDependency(operations: [submissionOperation])
+
+        let mappingOperation = ClosureOperation<[ExtrinsicMonitorSubmission]> {
+            let statuses = try statusWrapper.targetOperation.extractNoCancellableResultData()
+            let submissions = try submissionOperation.extractNoCancellableResultData()
+
+            return zip(submissions, statuses).map { submission, status in
+                ExtrinsicMonitorSubmission(
+                    extrinsicSubmittedModel: ExtrinsicSubmittedModel(
+                        txHash: submission.extrinsicHash,
+                        sender: submission.sender
+                    ),
+                    status: status
+                )
+            }
+        }
+
+        mappingOperation.addDependency(statusWrapper.targetOperation)
+
+        return statusWrapper
+            .insertingHead(operations: [submissionOperation])
+            .insertingTail(operation: mappingOperation)
+    }
+
+    public func submitAndMonitorWrapper(
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
         params: ExtrinsicSubmissionParams
@@ -204,5 +316,29 @@ private extension ExtrinsicSubmissionMonitorFactory {
             }
             self.submissionService.cancelExtrinsicWatch(for: subscriptionId)
         }
+    }
+
+    func createAggregateStatusWrapper(
+        for results: [SubmissionResult],
+        params: ExtrinsicSubmissionParams
+    ) -> CompoundOperationWrapper<[SubstrateExtrinsicStatus]> {
+        let statusWrappers = results.map { response in
+            statusService.fetchExtrinsicStatusForHash(
+                response.extrinsicHash,
+                inBlock: response.blockHash,
+                matchingEvents: params.eventsMatcher
+            )
+        }
+
+        let aggregationOperation = ClosureOperation<[SubstrateExtrinsicStatus]> {
+            try statusWrappers.map { try $0.targetOperation.extractNoCancellableResultData() }
+        }
+
+        statusWrappers.forEach { aggregationOperation.addDependency($0.targetOperation) }
+
+        return CompoundOperationWrapper(
+            targetOperation: aggregationOperation,
+            dependencies: statusWrappers.flatMap { $0.allOperations }
+        )
     }
 }
