@@ -118,6 +118,9 @@ public typealias ExtrinsicSubscriptionIdClosure = (UInt16) -> Bool
 public typealias ExtrinsicSubscriptionStatusClosure = (Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
 public typealias ExtrinsicStatusUpdateClosure = (Result<ExtrinsicStatusUpdate, Error>) -> Void
 
+public typealias ExtrinsicSubscriptionIndexedIdClosure = (Int, UInt16) -> Bool
+public typealias ExtrinsicSubscriptionIndexedStatusClosure = (Int, Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
+
 public typealias ExtrinsicBuilderClosure = (ExtrinsicBuilderProtocol) throws -> (ExtrinsicBuilderProtocol)
 public typealias ExtrinsicBuilderIndexedClosure = (ExtrinsicBuilderProtocol, Int) throws -> (ExtrinsicBuilderProtocol)
 

@@ -9,6 +9,13 @@ public protocol ExtrinsicSubmitMonitorFactoryProtocol {
         origin: ExtrinsicOriginDefining,
         params: ExtrinsicSubmissionParams
     ) -> CompoundOperationWrapper<ExtrinsicMonitorSubmission>
+
+    func submitAndMonitorWrapper(
+        extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        indexes: IndexSet,
+        params: ExtrinsicSubmissionParams
+    ) -> CompoundOperationWrapper<[ExtrinsicMonitorSubmission]>
 }
 
 public final class ExtrinsicSubmissionMonitorFactory {
