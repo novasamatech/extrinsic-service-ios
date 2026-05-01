@@ -14,7 +14,7 @@ public protocol ExtrinsicSubmitMonitorFactoryProtocol {
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         indexes: IndexSet,
-        params: ExtrinsicSubmissionParams
+        params: ExtrinsicIndexedSubmissionParams
     ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>>
 }
 
@@ -49,7 +49,7 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
         origin: ExtrinsicOriginDefining,
         indexes: IndexSet,
-        params: ExtrinsicSubmissionParams
+        params: ExtrinsicIndexedSubmissionParams
     ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>> {
         guard !indexes.isEmpty else {
             return .createWithResult(
@@ -77,7 +77,7 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
                 notificationClosure: { index, result in
                     guard collectedResults[index] == nil else { return }
 
-                    params.statusNotificationClosure?(result.map { $0.statusUpdate })
+                    params.statusNotificationClosure?(index, result.map { $0.statusUpdate })
 
                     switch result {
                     case let .success(model):
@@ -298,7 +298,7 @@ private extension ExtrinsicSubmissionMonitorFactory {
     func createAggregateMonitorWrapper(
         indexList: [Int],
         submissionResults: [Result<SubmissionResult, Error>],
-        params: ExtrinsicSubmissionParams
+        params: ExtrinsicIndexedSubmissionParams
     ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>> {
         var statusItems: [(index: Int, submission: SubmissionResult, wrapper: CompoundOperationWrapper<SubstrateExtrinsicStatus>)] = []
         var failedItems: [(index: Int, error: Error)] = []
