@@ -3,8 +3,8 @@ import SubstrateSdk
 
 public struct ExtrinsicRetriableResult<R> {
     public struct IndexedResult {
-        let index: Int
-        let result: Result<R, Error>
+        public let index: Int
+        public let result: Result<R, Error>
     }
 
     public let builderClosure: ExtrinsicBuilderIndexedClosure?

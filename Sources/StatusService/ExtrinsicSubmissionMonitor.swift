@@ -58,12 +58,9 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
         }
 
         let indexList = Array(indexes)
-        var subscriptionIds: [Int: UInt16] = [:]
+        let state = IndexedSubmissionState(indexList: indexList)
 
-        typealias Submission = Result<SubmissionResult, Error>
-        let submissionOperation = AsyncClosureOperation<[Submission]>(operationClosure: { completionClosure in
-            var collectedResults: [Int: Submission] = [:]
-
+        let submissionOperation = AsyncClosureOperation<[IndexedSubmissionState.Submission]>(operationClosure: { completionClosure in
             self.submissionService.submitAndWatch(
                 extrinsicBuilderClosure,
                 origin: origin,
@@ -71,49 +68,27 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
                 runningIn: self.processingQueue,
                 indexes: indexes,
                 subscriptionIdClosure: { index, subscriptionId in
-                    subscriptionIds[index] = subscriptionId
+                    state.register(subscriptionId: subscriptionId, for: index)
                     return true
                 },
                 notificationClosure: { index, result in
-                    guard collectedResults[index] == nil else { return }
-
                     params.statusNotificationClosure?(index, result.map { $0.statusUpdate })
 
-                    switch result {
-                    case let .success(model):
-                        self.logger.debug("Extrinsic[\(index)] notification status update: \(model.statusUpdate)")
-
-                        if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
-                            self.stopSubscription(for: subscriptionIds[index])
-                            collectedResults[index] = .success(SubmissionResult(
-                                blockHash: blockHash,
-                                extrinsicHash: model.statusUpdate.extrinsicHash,
-                                sender: model.sender
-                            ))
-                        } else if let failure = model.statusUpdate.getFinalExtrinsicFailure() {
-                            self.stopSubscription(for: subscriptionIds[index])
-                            collectedResults[index] = .failure(failure)
-                        } else {
-                            self.logger.debug("Skipping extrinsic[\(index)] status")
-                            return
-                        }
-
-                    case let .failure(error):
-                        self.logger.error("Extrinsic[\(index)] notification error: \(error)")
-                        self.stopSubscription(for: subscriptionIds[index])
-                        collectedResults[index] = .failure(error)
+                    guard state.handle(result, for: index) else {
+                        self.logger.debug("Skipping extrinsic[\(index)] status")
+                        return
                     }
 
-                    guard collectedResults.count == indexList.count else { return }
+                    self.stopSubscription(for: state.subscriptionId(for: index))
 
-                    completionClosure(.success(indexList.map { collectedResults[$0]! }))
+                    if let results = state.orderedResults() {
+                        completionClosure(.success(results))
+                    }
                 }
             )
         }, cancelationClosure: {
             self.processingQueue.async {
-                subscriptionIds.values.forEach { id in
-                    self.submissionService.cancelExtrinsicWatch(for: id)
-                }
+                state.allSubscriptionIds().forEach { self.submissionService.cancelExtrinsicWatch(for: $0) }
             }
         })
 
@@ -352,5 +327,60 @@ private extension ExtrinsicSubmissionMonitorFactory {
             targetOperation: aggregationOperation,
             dependencies: statusItems.flatMap { $0.wrapper.allOperations }
         )
+    }
+}
+
+extension ExtrinsicSubmissionMonitorFactory {
+    private final class IndexedSubmissionState {
+        typealias Submission = Result<SubmissionResult, Error>
+
+        private let indexList: [Int]
+        private var subscriptionIds: [Int: UInt16] = [:]
+        private var collectedResults: [Int: Submission] = [:]
+
+        init(indexList: [Int]) { self.indexList = indexList }
+
+        func register(subscriptionId: UInt16, for index: Int) {
+            subscriptionIds[index] = subscriptionId
+        }
+
+        func subscriptionId(for index: Int) -> UInt16? {
+            subscriptionIds[index]
+        }
+
+        func allSubscriptionIds() -> [UInt16] {
+            Array(subscriptionIds.values)
+        }
+
+        // Returns true if this notification is terminal for the given index.
+        // Idempotent: duplicate calls for same index return false.
+        func handle(_ result: Result<ExtrinsicSubscribedStatusModel, Error>, for index: Int) -> Bool {
+            guard collectedResults[index] == nil else { return false }
+
+            switch result {
+            case let .success(model):
+                if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
+                    collectedResults[index] = .success(SubmissionResult(
+                        blockHash: blockHash,
+                        extrinsicHash: model.statusUpdate.extrinsicHash,
+                        sender: model.sender
+                    ))
+                } else if let failure = model.statusUpdate.getFinalExtrinsicFailure() {
+                    collectedResults[index] = .failure(failure)
+                } else {
+                    return false
+                }
+            case let .failure(error):
+                collectedResults[index] = .failure(error)
+            }
+
+            return true
+        }
+
+        // Returns ordered results once all indexes have a terminal result, nil otherwise.
+        func orderedResults() -> [Submission]? {
+            guard collectedResults.count == indexList.count else { return nil }
+            return indexList.map { collectedResults[$0]! }
+        }
     }
 }
