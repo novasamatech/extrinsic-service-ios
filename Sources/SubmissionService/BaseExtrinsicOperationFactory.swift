@@ -185,6 +185,40 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
         )
     }
 
+    public func buildExtrinsics(
+        _ closure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        payingIn chainAssetId: ChainAssetId?,
+        indexes: IndexSet
+    ) -> CompoundOperationWrapper<[ExtrinsicBuiltModel]> {
+        let indexList = Array(indexes)
+
+        let builderWrapper = createExtrinsicWrapper(
+            customClosure: closure,
+            origin: origin,
+            payingIn: chainAssetId,
+            purpose: .submission,
+            indexes: indexList
+        )
+
+        let resOperation = ClosureOperation<[ExtrinsicBuiltModel]> {
+            let result = try builderWrapper.targetOperation.extractNoCancellableResultData()
+            return indexList.map { index in
+                ExtrinsicBuiltModel(
+                    extrinsic: result.extrinsics[index].toHex(includePrefix: true),
+                    sender: result.sender
+                )
+            }
+        }
+
+        builderWrapper.allOperations.forEach { resOperation.addDependency($0) }
+
+        return CompoundOperationWrapper(
+            targetOperation: resOperation,
+            dependencies: builderWrapper.allOperations
+        )
+    }
+
     public func buildExtrinsic(
         _ closure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,

@@ -3,8 +3,8 @@ import SubstrateSdk
 
 public struct ExtrinsicRetriableResult<R> {
     public struct IndexedResult {
-        let index: Int
-        let result: Result<R, Error>
+        public let index: Int
+        public let result: Result<R, Error>
     }
 
     public let builderClosure: ExtrinsicBuilderIndexedClosure?
@@ -116,7 +116,12 @@ public typealias ExtrinsicBuiltClosure = (ExtrinsicBuiltResult) -> Void
 
 public typealias ExtrinsicSubscriptionIdClosure = (UInt16) -> Bool
 public typealias ExtrinsicSubscriptionStatusClosure = (Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
+
 public typealias ExtrinsicStatusUpdateClosure = (Result<ExtrinsicStatusUpdate, Error>) -> Void
+public typealias ExtrinsicIndexedStatusUpdateClosure = (Int, Result<ExtrinsicStatusUpdate, Error>) -> Void
+
+public typealias ExtrinsicSubscriptionIndexedIdClosure = (Int, UInt16) -> Bool
+public typealias ExtrinsicSubscriptionIndexedStatusClosure = (Int, Result<ExtrinsicSubscribedStatusModel, Error>) -> Void
 
 public typealias ExtrinsicBuilderClosure = (ExtrinsicBuilderProtocol) throws -> (ExtrinsicBuilderProtocol)
 public typealias ExtrinsicBuilderIndexedClosure = (ExtrinsicBuilderProtocol, Int) throws -> (ExtrinsicBuilderProtocol)

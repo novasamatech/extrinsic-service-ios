@@ -9,6 +9,13 @@ public protocol ExtrinsicSubmitMonitorFactoryProtocol {
         origin: ExtrinsicOriginDefining,
         params: ExtrinsicSubmissionParams
     ) -> CompoundOperationWrapper<ExtrinsicMonitorSubmission>
+
+    func submitAndMonitorWrapper(
+        extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        indexes: IndexSet,
+        params: ExtrinsicIndexedSubmissionParams
+    ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>>
 }
 
 public final class ExtrinsicSubmissionMonitorFactory {
@@ -38,6 +45,70 @@ public final class ExtrinsicSubmissionMonitorFactory {
 }
 
 extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtocol {
+    public func submitAndMonitorWrapper(
+        extrinsicBuilderClosure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        indexes: IndexSet,
+        params: ExtrinsicIndexedSubmissionParams
+    ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>> {
+        guard !indexes.isEmpty else {
+            return .createWithResult(
+                ExtrinsicRetriableResult(builderClosure: extrinsicBuilderClosure, results: [])
+            )
+        }
+
+        let indexList = Array(indexes)
+        let state = IndexedSubmissionState(indexList: indexList)
+
+        let submissionOperation = AsyncClosureOperation<[IndexedSubmissionState.Submission]>(operationClosure: { completionClosure in
+            self.submissionService.submitAndWatch(
+                extrinsicBuilderClosure,
+                origin: origin,
+                payingIn: params.feeAssetId,
+                runningIn: self.processingQueue,
+                indexes: indexes,
+                subscriptionIdClosure: { index, subscriptionId in
+                    state.register(subscriptionId: subscriptionId, for: index)
+                    return true
+                },
+                notificationClosure: { index, result in
+                    params.statusNotificationClosure?(index, result.map { $0.statusUpdate })
+
+                    guard state.handle(result, for: index) else {
+                        self.logger.debug("Skipping extrinsic[\(index)] status")
+                        return
+                    }
+
+                    self.stopSubscription(for: state.subscriptionId(for: index))
+
+                    if let results = state.orderedResults() {
+                        completionClosure(.success(results))
+                    }
+                }
+            )
+        }, cancelationClosure: {
+            self.processingQueue.async {
+                state.allSubscriptionIds().forEach { self.submissionService.cancelExtrinsicWatch(for: $0) }
+            }
+        })
+
+        let monitorWrapper: CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>>
+        monitorWrapper = OperationCombiningService.compoundNonOptionalWrapper(
+            operationManager: OperationManager(operationQueue: operationQueue)
+        ) {
+            let submissionResults = try submissionOperation.extractNoCancellableResultData()
+            return self.createAggregateMonitorWrapper(
+                indexList: indexList,
+                submissionResults: submissionResults,
+                params: params
+            )
+        }
+
+        monitorWrapper.addDependency(operations: [submissionOperation])
+
+        return monitorWrapper.insertingHead(operations: [submissionOperation])
+    }
+
     public func submitAndMonitorWrapper(
         extrinsicBuilderClosure: @escaping ExtrinsicBuilderClosure,
         origin: ExtrinsicOriginDefining,
@@ -196,6 +267,120 @@ private extension ExtrinsicSubmissionMonitorFactory {
                 return
             }
             self.submissionService.cancelExtrinsicWatch(for: subscriptionId)
+        }
+    }
+
+    func createAggregateMonitorWrapper(
+        indexList: [Int],
+        submissionResults: [Result<SubmissionResult, Error>],
+        params: ExtrinsicIndexedSubmissionParams
+    ) -> CompoundOperationWrapper<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>> {
+        var statusItems: [(index: Int, submission: SubmissionResult, wrapper: CompoundOperationWrapper<SubstrateExtrinsicStatus>)] = []
+        var failedItems: [(index: Int, error: Error)] = []
+
+        for (index, result) in zip(indexList, submissionResults) {
+            switch result {
+            case let .success(submission):
+                let wrapper = statusService.fetchExtrinsicStatusForHash(
+                    submission.extrinsicHash,
+                    inBlock: submission.blockHash,
+                    matchingEvents: params.eventsMatcher
+                )
+                statusItems.append((index: index, submission: submission, wrapper: wrapper))
+            case let .failure(error):
+                failedItems.append((index: index, error: error))
+            }
+        }
+
+        let aggregationOperation = ClosureOperation<ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>> {
+            var indexedResults: [ExtrinsicRetriableResult<ExtrinsicMonitorSubmission>.IndexedResult] = []
+
+            for item in statusItems {
+                do {
+                    let status = try item.wrapper.targetOperation.extractNoCancellableResultData()
+                    let monitor = ExtrinsicMonitorSubmission(
+                        extrinsicSubmittedModel: ExtrinsicSubmittedModel(
+                            txHash: item.submission.extrinsicHash,
+                            sender: item.submission.sender
+                        ),
+                        status: status
+                    )
+                    indexedResults.append(.init(index: item.index, result: .success(monitor)))
+                } catch {
+                    indexedResults.append(.init(index: item.index, result: .failure(error)))
+                }
+            }
+
+            for item in failedItems {
+                indexedResults.append(.init(index: item.index, result: .failure(item.error)))
+            }
+
+            return ExtrinsicRetriableResult(
+                builderClosure: nil,
+                results: indexedResults.sorted { $0.index < $1.index }
+            )
+        }
+
+        statusItems.forEach { aggregationOperation.addDependency($0.wrapper.targetOperation) }
+
+        return CompoundOperationWrapper(
+            targetOperation: aggregationOperation,
+            dependencies: statusItems.flatMap { $0.wrapper.allOperations }
+        )
+    }
+}
+
+extension ExtrinsicSubmissionMonitorFactory {
+    private final class IndexedSubmissionState {
+        typealias Submission = Result<SubmissionResult, Error>
+
+        private let indexList: [Int]
+        private var subscriptionIds: [Int: UInt16] = [:]
+        private var collectedResults: [Int: Submission] = [:]
+
+        init(indexList: [Int]) { self.indexList = indexList }
+
+        func register(subscriptionId: UInt16, for index: Int) {
+            subscriptionIds[index] = subscriptionId
+        }
+
+        func subscriptionId(for index: Int) -> UInt16? {
+            subscriptionIds[index]
+        }
+
+        func allSubscriptionIds() -> [UInt16] {
+            Array(subscriptionIds.values)
+        }
+
+        // Returns true if this notification is terminal for the given index.
+        // Idempotent: duplicate calls for same index return false.
+        func handle(_ result: Result<ExtrinsicSubscribedStatusModel, Error>, for index: Int) -> Bool {
+            guard collectedResults[index] == nil else { return false }
+
+            switch result {
+            case let .success(model):
+                if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
+                    collectedResults[index] = .success(SubmissionResult(
+                        blockHash: blockHash,
+                        extrinsicHash: model.statusUpdate.extrinsicHash,
+                        sender: model.sender
+                    ))
+                } else if let failure = model.statusUpdate.getFinalExtrinsicFailure() {
+                    collectedResults[index] = .failure(failure)
+                } else {
+                    return false
+                }
+            case let .failure(error):
+                collectedResults[index] = .failure(error)
+            }
+
+            return true
+        }
+
+        // Returns ordered results once all indexes have a terminal result, nil otherwise.
+        func orderedResults() -> [Submission]? {
+            guard collectedResults.count == indexList.count else { return nil }
+            return indexList.map { collectedResults[$0]! }
         }
     }
 }

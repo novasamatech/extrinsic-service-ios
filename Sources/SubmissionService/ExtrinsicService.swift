@@ -323,6 +323,49 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
         }
     }
 
+    public func submitAndWatch(
+        _ closure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        payingIn chainAssetId: ChainAssetId?,
+        runningIn queue: DispatchQueue,
+        indexes: IndexSet,
+        subscriptionIdClosure: @escaping ExtrinsicSubscriptionIndexedIdClosure,
+        notificationClosure: @escaping ExtrinsicSubscriptionIndexedStatusClosure
+    ) {
+        let extrinsicsWrapper = operationFactory.buildExtrinsics(
+            closure,
+            origin: origin,
+            payingIn: chainAssetId,
+            indexes: indexes
+        )
+
+        execute(
+            wrapper: extrinsicsWrapper,
+            inOperationQueue: operationQueue,
+            runningCallbackIn: queue
+        ) { [weak self] result in
+            switch result {
+            case let .success(builtExtrinsics):
+                zip(Array(indexes), builtExtrinsics).forEach { index, builtExtrinsic in
+                    self?.submitAndSubscribe(
+                        builtExtrinsic: builtExtrinsic,
+                        runningIn: queue,
+                        subscriptionIdClosure: { subscriptionId in
+                            subscriptionIdClosure(index, subscriptionId)
+                        },
+                        notificationClosure: { statusResult in
+                            notificationClosure(index, statusResult)
+                        }
+                    )
+                }
+            case let .failure(error):
+                Array(indexes).forEach { index in
+                    notificationClosure(index, .failure(error))
+                }
+            }
+        }
+    }
+
     public func cancelExtrinsicWatch(for identifier: UInt16) {
         operationFactory.connection.cancelForIdentifier(identifier)
     }

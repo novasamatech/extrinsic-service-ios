@@ -26,6 +26,13 @@ public protocol ExtrinsicOperationFactoryProtocol {
         origin: ExtrinsicOriginDefining,
         payingIn chainAssetId: ChainAssetId?
     ) -> CompoundOperationWrapper<ExtrinsicBuiltModel>
+
+    func buildExtrinsics(
+        _ closure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        payingIn chainAssetId: ChainAssetId?,
+        indexes: IndexSet
+    ) -> CompoundOperationWrapper<[ExtrinsicBuiltModel]>
 }
 
 public extension ExtrinsicOperationFactoryProtocol {

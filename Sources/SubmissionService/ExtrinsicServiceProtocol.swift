@@ -63,6 +63,16 @@ public protocol ExtrinsicServiceProtocol {
         notificationClosure: @escaping ExtrinsicSubscriptionStatusClosure
     )
 
+    func submitAndWatch(
+        _ closure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        payingIn chainAssetId: ChainAssetId?,
+        runningIn queue: DispatchQueue,
+        indexes: IndexSet,
+        subscriptionIdClosure: @escaping ExtrinsicSubscriptionIndexedIdClosure,
+        notificationClosure: @escaping ExtrinsicSubscriptionIndexedStatusClosure
+    )
+
     func cancelExtrinsicWatch(for identifier: UInt16)
 
     func buildExtrinsic(
@@ -217,6 +227,25 @@ public extension ExtrinsicServiceProtocol {
             origin: origin,
             payingIn: nil,
             runningIn: queue,
+            subscriptionIdClosure: subscriptionIdClosure,
+            notificationClosure: notificationClosure
+        )
+    }
+
+    func submitAndWatch(
+        _ closure: @escaping ExtrinsicBuilderIndexedClosure,
+        origin: ExtrinsicOriginDefining,
+        runningIn queue: DispatchQueue,
+        indexes: IndexSet,
+        subscriptionIdClosure: @escaping ExtrinsicSubscriptionIndexedIdClosure,
+        notificationClosure: @escaping ExtrinsicSubscriptionIndexedStatusClosure
+    ) {
+        submitAndWatch(
+            closure,
+            origin: origin,
+            payingIn: nil,
+            runningIn: queue,
+            indexes: indexes,
             subscriptionIdClosure: subscriptionIdClosure,
             notificationClosure: notificationClosure
         )
