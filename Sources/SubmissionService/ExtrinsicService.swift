@@ -84,6 +84,7 @@ public final class ExtrinsicService {
                 RPCMethod.submitAndWatchExtrinsic,
                 params: [extrinsic],
                 unsubscribeMethod: "author_unwatchExtrinsic",
+                options: JSONRPCOptions(resendOnReconnect: false),
                 updateClosure: updateClosure,
                 failureClosure: failureClosure
             )
