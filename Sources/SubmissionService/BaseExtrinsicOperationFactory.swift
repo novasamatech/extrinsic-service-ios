@@ -121,6 +121,7 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
                 let submitOperation = JSONRPCListOperation<String>(
                     engine: engine,
                     method: RPCMethod.submitExtrinsic,
+                    options: JSONRPCOptions(resendOnReconnect: false),
                     timeout: timeout
                 )
 
