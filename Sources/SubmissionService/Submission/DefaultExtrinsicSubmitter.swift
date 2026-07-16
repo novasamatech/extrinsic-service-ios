@@ -118,4 +118,8 @@ extension DefaultExtrinsicSubmitter: ExtrinsicSubmitting {
             notificationClosure(.failure(error))
         }
     }
+
+    public func cancelExtrinsicWatch(for identifier: UInt16) {
+        operationFactory.connection.cancelForIdentifier(identifier)
+    }
 }

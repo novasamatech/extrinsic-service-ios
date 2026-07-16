@@ -339,7 +339,7 @@ extension ExtrinsicService: ExtrinsicServiceProtocol {
     }
 
     public func cancelExtrinsicWatch(for identifier: UInt16) {
-        operationFactory.connection.cancelForIdentifier(identifier)
+        submitter.cancelExtrinsicWatch(for: identifier)
     }
 
     public func buildExtrinsic(

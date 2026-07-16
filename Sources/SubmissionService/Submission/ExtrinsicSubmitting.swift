@@ -14,4 +14,6 @@ public protocol ExtrinsicSubmitting {
         subscriptionIdClosure: @escaping ExtrinsicSubscriptionIdClosure,
         notificationClosure: @escaping ExtrinsicSubscriptionStatusClosure
     )
+
+    func cancelExtrinsicWatch(for identifier: UInt16)
 }
