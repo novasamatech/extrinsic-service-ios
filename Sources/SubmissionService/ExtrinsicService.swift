@@ -9,7 +9,17 @@ public final class ExtrinsicService {
     let operationQueue: OperationQueue
     let submitter: ExtrinsicSubmitting
 
-    public init(
+    init(
+        operationFactory: ExtrinsicOperationFactoryProtocol,
+        operationQueue: OperationQueue,
+        submitter: ExtrinsicSubmitting
+    ) {
+        self.operationFactory = operationFactory
+        self.operationQueue = operationQueue
+        self.submitter = submitter
+    }
+
+    public convenience init(
         chain: ChainProtocol,
         extrinsicVersion: Extrinsic.Version,
         runtimeRegistry: RuntimeCodingServiceProtocol,
@@ -35,12 +45,14 @@ public final class ExtrinsicService {
             timeout: timeout
         )
 
-        self.operationFactory = operationFactory
-        self.operationQueue = operationQueue
-        self.submitter = submitter ?? DefaultExtrinsicSubmitter(
+        self.init(
             operationFactory: operationFactory,
             operationQueue: operationQueue,
-            timeout: timeout
+            submitter: submitter ?? DefaultExtrinsicSubmitter(
+                operationFactory: operationFactory,
+                operationQueue: operationQueue,
+                timeout: timeout
+            )
         )
     }
 }
