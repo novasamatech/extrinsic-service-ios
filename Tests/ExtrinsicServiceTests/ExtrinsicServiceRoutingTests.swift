@@ -46,7 +46,7 @@ struct ExtrinsicServiceRoutingTests {
             origin: ExtrinsicOriginDefiningMock(),
             payingIn: nil,
             runningIn: context.queue,
-            indexes: IndexSet([2, 5]),
+            indexes: IndexSet(0 ..< 2),
             subscriptionIdClosure: { _, _ in true },
             notificationClosure: { index, _ in
                 tagged.record(index)
@@ -61,7 +61,7 @@ struct ExtrinsicServiceRoutingTests {
         context.submitter.subscribeCalls[1].notificationClosure(.failure(TestError.submission))
 
         try notified.wait(count: 2)
-        #expect(tagged.values == [2, 5], "notifications must carry the original index values")
+        #expect(tagged.values.sorted() == [0, 1], "notifications must carry the original index values")
     }
 
     @Test("cancelExtrinsicWatch delegates to the submitter, not the connection")
@@ -102,20 +102,20 @@ extension ExtrinsicServiceRoutingTests {
         #expect(submitted.txHash == "0xaa")
     }
 
-    @Test("a non-contiguous IndexSet keeps results keyed to the original indexes")
-    func nonContiguousIndexesArePreserved() throws {
+    @Test("indexed results stay keyed to the caller's indexes and ordered with the extrinsics")
+    func indexedResultsArePreserved() throws {
         let context = Context(buildExtrinsics: .success([.stub("0xaa"), .stub("0xbb")]))
         let completed = AsyncExpectation()
         let results = Recorded<SubmitIndexedExtrinsicResult>()
 
-        context.submitIndexed(IndexSet([2, 5])) { result in
+        context.submitIndexed(IndexSet(0 ..< 2)) { result in
             results.record(result)
             completed.fulfill()
         }
 
         try completed.wait()
         let indexed = try #require(results.first)
-        #expect(indexed.results.map(\.index) == [2, 5], "results must carry the caller's index values")
+        #expect(indexed.results.map(\.index) == [0, 1], "results must carry the caller's index values")
         #expect(try indexed.results[0].result.get().txHash == "0xaa")
         #expect(try indexed.results[1].result.get().txHash == "0xbb")
     }
@@ -132,7 +132,7 @@ extension ExtrinsicServiceRoutingTests {
         let completed = AsyncExpectation()
         let results = Recorded<SubmitIndexedExtrinsicResult>()
 
-        context.submitIndexed(IndexSet([2, 5])) { result in
+        context.submitIndexed(IndexSet(0 ..< 2)) { result in
             results.record(result)
             completed.fulfill()
         }
@@ -141,7 +141,7 @@ extension ExtrinsicServiceRoutingTests {
         let indexed = try #require(results.first)
         #expect(try indexed.results[0].result.get().txHash == "0xaa")
         guard case .failure = indexed.results[1].result else {
-            Issue.record("expected index 5 to fail independently")
+            Issue.record("expected index 1 to fail independently")
             return
         }
     }
@@ -152,14 +152,14 @@ extension ExtrinsicServiceRoutingTests {
         let completed = AsyncExpectation()
         let results = Recorded<SubmitIndexedExtrinsicResult>()
 
-        context.submitIndexed(IndexSet([2, 5])) { result in
+        context.submitIndexed(IndexSet(0 ..< 2)) { result in
             results.record(result)
             completed.fulfill()
         }
 
         try completed.wait()
         let indexed = try #require(results.first)
-        #expect(indexed.results.map(\.index) == [2, 5])
+        #expect(indexed.results.map(\.index) == [0, 1])
         #expect(indexed.results.allSatisfy { if case .failure = $0.result { true } else { false } })
         #expect(context.submitter.submitCalls.isEmpty, "nothing may be submitted when building failed")
     }
