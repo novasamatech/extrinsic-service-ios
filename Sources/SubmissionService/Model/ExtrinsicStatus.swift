@@ -35,6 +35,8 @@ public struct ExtrinsicStatusUpdate {
             return .invalid
         case .dropped:
             return .dropped
+        case .unsurped:
+            return .usurped
         case .finalityTimeout:
             return .finalityTimeout
         default:
@@ -110,4 +112,5 @@ public enum FinalExtrinsicStatusError: Error {
     case finalityTimeout
     case invalid
     case dropped
+    case usurped
 }
