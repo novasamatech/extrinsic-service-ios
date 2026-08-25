@@ -25,6 +25,34 @@ public struct ExtrinsicStatusUpdate {
         }
     }
 
+    /// The block hash of the status that is terminal for the requested target.
+    /// In `.finalized` mode a bare `inBlock` update is not terminal.
+    public func getTerminalBlockHash(trackingTill: ExtrinsicTrackingTill) -> BlockHash? {
+        guard case let .onChain(remoteStatus) = extrinsicStatus else {
+            return nil
+        }
+
+        switch (trackingTill, remoteStatus) {
+        case let (.finalized, .finalized(blockHash)):
+            return blockHash
+        case let (.inBlock, .inBlock(blockHash)),
+             let (.inBlock, .finalized(blockHash)):
+            return blockHash
+        default:
+            return nil
+        }
+    }
+
+    /// The block hash for a provisional `inBlock` inclusion, used in `.finalized`
+    /// mode to compute the execution result while finality is still pending.
+    public func getInBlockHash() -> BlockHash? {
+        guard case let .onChain(.inBlock(blockHash)) = extrinsicStatus else {
+            return nil
+        }
+
+        return blockHash
+    }
+
     public func getFinalExtrinsicFailure() -> FinalExtrinsicStatusError? {
         guard case let .onChain(remoteStatus) = extrinsicStatus else {
             return nil
@@ -48,6 +76,9 @@ public struct ExtrinsicStatusUpdate {
 public enum ExtrinsicStatus {
     case created
     case onChain(RemoteExtrinsicStatus)
+    /// Provisional execution result surfaced at inclusion time while finality is
+    /// still pending (only emitted in `ExtrinsicTrackingTill.finalized` mode).
+    case executed(ExtrinsicExecution)
 }
 
 // https://paritytech.github.io/polkadot-sdk/master/src/sc_transaction_pool_api/lib.rs.html#130

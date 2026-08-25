@@ -74,7 +74,17 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
                 notificationClosure: { index, result in
                     params.statusNotificationClosure?(index, result.map { $0.statusUpdate })
 
-                    guard state.handle(result, for: index) else {
+                    if params.trackingTill == .finalized,
+                       let notificationClosure = params.statusNotificationClosure,
+                       case let .success(model) = result,
+                       let inBlockHash = model.statusUpdate.getInBlockHash() {
+                        self.fetchProvisionalExecution(
+                            extrinsicHash: model.statusUpdate.extrinsicHash,
+                            inBlockHash: inBlockHash
+                        ) { notificationClosure(index, .success($0)) }
+                    }
+
+                    guard state.handle(result, for: index, trackingTill: params.trackingTill) else {
                         self.logger.debug("Skipping extrinsic[\(index)] status")
                         return
                     }
@@ -188,12 +198,24 @@ private extension ExtrinsicSubmissionMonitorFactory {
         case let .success(model):
             logger.debug("Extrinsic notification status update: \(model.statusUpdate)")
 
-            if handleInBlockOrFinalized(
+            if handleTerminal(
                 from: model,
+                trackingTill: params.trackingTill,
                 subscriptionId: subscriptionId,
                 completionClosure: completionClosure
             ) {
                 return
+            }
+
+            // In finalized mode a bare inBlock is not terminal: surface the
+            // provisional execution result and keep the subscription open.
+            if params.trackingTill == .finalized,
+               let notificationClosure = params.statusNotificationClosure,
+               let inBlockHash = model.statusUpdate.getInBlockHash() {
+                fetchProvisionalExecution(
+                    extrinsicHash: model.statusUpdate.extrinsicHash,
+                    inBlockHash: inBlockHash
+                ) { notificationClosure(.success($0)) }
             }
 
             if handleFinalFailureStatus(
@@ -215,12 +237,13 @@ private extension ExtrinsicSubmissionMonitorFactory {
         }
     }
     
-    func handleInBlockOrFinalized(
+    func handleTerminal(
         from model: ExtrinsicSubscribedStatusModel,
+        trackingTill: ExtrinsicTrackingTill,
         subscriptionId: UInt16?,
         completionClosure: (Result<SubmissionResult, Error>) -> Void
     ) -> Bool {
-        guard let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() else {
+        guard let blockHash = model.statusUpdate.getTerminalBlockHash(trackingTill: trackingTill) else {
             return false
         }
 
@@ -233,8 +256,45 @@ private extension ExtrinsicSubmissionMonitorFactory {
         )
 
         completionClosure(.success(response))
-        
+
         return true
+    }
+
+    // Queries block events at the provisional inBlock hash and reports the
+    // resulting execution as an `.executed` status update. A query failure is
+    // non-fatal: we skip the provisional emission and keep awaiting finality.
+    func fetchProvisionalExecution(
+        extrinsicHash: String,
+        inBlockHash: BlockHash,
+        onExecution: @escaping (ExtrinsicStatusUpdate) -> Void
+    ) {
+        let wrapper = statusService.fetchExtrinsicStatusForHash(
+            extrinsicHash,
+            inBlock: inBlockHash,
+            matchingEvents: nil
+        )
+
+        execute(
+            wrapper: wrapper,
+            inOperationQueue: operationQueue,
+            runningCallbackIn: processingQueue
+        ) { result in
+            guard case let .success(status) = result else {
+                return
+            }
+
+            let update = ExtrinsicStatusUpdate(
+                extrinsicHash: extrinsicHash,
+                extrinsicStatus: .executed(
+                    ExtrinsicExecution(
+                        blockHash: inBlockHash,
+                        dispatchStatus: DispatchStatus(executionStatus: status)
+                    )
+                )
+            )
+
+            onExecution(update)
+        }
     }
     
     func handleFinalFailureStatus(
@@ -354,12 +414,16 @@ extension ExtrinsicSubmissionMonitorFactory {
 
         // Returns true if this notification is terminal for the given index.
         // Idempotent: duplicate calls for same index return false.
-        func handle(_ result: Result<ExtrinsicSubscribedStatusModel, Error>, for index: Int) -> Bool {
+        func handle(
+            _ result: Result<ExtrinsicSubscribedStatusModel, Error>,
+            for index: Int,
+            trackingTill: ExtrinsicTrackingTill
+        ) -> Bool {
             guard collectedResults[index] == nil else { return false }
 
             switch result {
             case let .success(model):
-                if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
+                if let blockHash = model.statusUpdate.getTerminalBlockHash(trackingTill: trackingTill) {
                     collectedResults[index] = .success(SubmissionResult(
                         blockHash: blockHash,
                         extrinsicHash: model.statusUpdate.extrinsicHash,
