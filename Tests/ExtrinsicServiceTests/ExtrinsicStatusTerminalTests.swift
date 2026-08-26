@@ -40,17 +40,4 @@ struct ExtrinsicStatusTerminalTests {
     @Test func retractedIsNeverTerminal() {
         #expect(update(.retracted(hash)).getTerminalBlockHash(trackingTill: .finalized) == nil)
     }
-
-    // MARK: - provisional inBlock hash
-
-    @Test func inBlockHashPresentOnlyForInBlock() {
-        #expect(update(.inBlock(hash)).getInBlockHash() == hash)
-        #expect(update(.finalized(hash)).getInBlockHash() == nil)
-        #expect(update(.ready).getInBlockHash() == nil)
-    }
-
-    @Test func inBlockHashNilWhenNotOnChain() {
-        let created = ExtrinsicStatusUpdate(extrinsicHash: "0xext", extrinsicStatus: .created)
-        #expect(created.getInBlockHash() == nil)
-    }
 }
