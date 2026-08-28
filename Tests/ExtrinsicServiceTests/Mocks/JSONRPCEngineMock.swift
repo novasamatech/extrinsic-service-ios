@@ -74,6 +74,7 @@ final class JSONRPCEngineMock: JSONRPCEngine, @unchecked Sendable {
         params: P?,
         unsubscribeMethod: String,
         options: JSONRPCOptions,
+        onSubscribed: ((JSONRPCSubscriptionId) -> Void)?,
         updateClosure: @escaping (T) -> Void,
         failureClosure: @escaping (Error, Bool) -> Void
     ) throws -> UInt16 {
@@ -100,7 +101,7 @@ final class JSONRPCEngineMock: JSONRPCEngine, @unchecked Sendable {
         return identifier
     }
 
-    func cancelForIdentifiers(_ identifiers: [UInt16]) {
+    func cancelForIdentifiers(_ identifiers: [UInt16], sendUnsubscribe _: Bool) {
         lock.withLock { storedCancelledIds.append(contentsOf: identifiers) }
     }
 

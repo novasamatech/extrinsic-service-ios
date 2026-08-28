@@ -25,6 +25,25 @@ public struct ExtrinsicStatusUpdate {
         }
     }
 
+    /// The block hash of the status that is terminal for the requested target.
+    /// In `.finalized` mode a bare `inBlock` update is not terminal — tracking
+    /// continues until the block is finalized.
+    public func getTerminalBlockHash(trackingTill: ExtrinsicTrackingTill) -> BlockHash? {
+        guard case let .onChain(remoteStatus) = extrinsicStatus else {
+            return nil
+        }
+
+        switch (trackingTill, remoteStatus) {
+        case let (.finalized, .finalized(blockHash)):
+            return blockHash
+        case let (.inBlock, .inBlock(blockHash)),
+             let (.inBlock, .finalized(blockHash)):
+            return blockHash
+        default:
+            return nil
+        }
+    }
+
     public func getFinalExtrinsicFailure() -> FinalExtrinsicStatusError? {
         guard case let .onChain(remoteStatus) = extrinsicStatus else {
             return nil

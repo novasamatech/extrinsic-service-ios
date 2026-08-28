@@ -74,7 +74,7 @@ extension ExtrinsicSubmissionMonitorFactory: ExtrinsicSubmitMonitorFactoryProtoc
                 notificationClosure: { index, result in
                     params.statusNotificationClosure?(index, result.map { $0.statusUpdate })
 
-                    guard state.handle(result, for: index) else {
+                    guard state.handle(result, for: index, trackingTill: params.trackingTill) else {
                         self.logger.debug("Skipping extrinsic[\(index)] status")
                         return
                     }
@@ -188,8 +188,9 @@ private extension ExtrinsicSubmissionMonitorFactory {
         case let .success(model):
             logger.debug("Extrinsic notification status update: \(model.statusUpdate)")
 
-            if handleInBlockOrFinalized(
+            if handleTerminal(
                 from: model,
+                trackingTill: params.trackingTill,
                 subscriptionId: subscriptionId,
                 completionClosure: completionClosure
             ) {
@@ -215,12 +216,13 @@ private extension ExtrinsicSubmissionMonitorFactory {
         }
     }
     
-    func handleInBlockOrFinalized(
+    func handleTerminal(
         from model: ExtrinsicSubscribedStatusModel,
+        trackingTill: ExtrinsicTrackingTill,
         subscriptionId: UInt16?,
         completionClosure: (Result<SubmissionResult, Error>) -> Void
     ) -> Bool {
-        guard let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() else {
+        guard let blockHash = model.statusUpdate.getTerminalBlockHash(trackingTill: trackingTill) else {
             return false
         }
 
@@ -354,12 +356,16 @@ extension ExtrinsicSubmissionMonitorFactory {
 
         // Returns true if this notification is terminal for the given index.
         // Idempotent: duplicate calls for same index return false.
-        func handle(_ result: Result<ExtrinsicSubscribedStatusModel, Error>, for index: Int) -> Bool {
+        func handle(
+            _ result: Result<ExtrinsicSubscribedStatusModel, Error>,
+            for index: Int,
+            trackingTill: ExtrinsicTrackingTill
+        ) -> Bool {
             guard collectedResults[index] == nil else { return false }
 
             switch result {
             case let .success(model):
-                if let blockHash = model.statusUpdate.getInBlockOrFinalizedHash() {
+                if let blockHash = model.statusUpdate.getTerminalBlockHash(trackingTill: trackingTill) {
                     collectedResults[index] = .success(SubmissionResult(
                         blockHash: blockHash,
                         extrinsicHash: model.statusUpdate.extrinsicHash,
