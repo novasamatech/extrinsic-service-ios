@@ -109,12 +109,12 @@ public struct ExtrinsicBuiltModel {
         return period
     }
 
-    public var mortalityAnchorBlock: BlockNumber? {
+    public var mortalityAnchorBlock: BlockNumberWithHash? {
         guard case let .mortal(mortalExtrinsic) = mortality else {
             return nil
         }
 
-        return mortalExtrinsic.blockNumber
+        return mortalExtrinsic.anchorBlock
     }
 
     public init(

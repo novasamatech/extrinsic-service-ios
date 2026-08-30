@@ -13,8 +13,10 @@ public enum ExtrinsicMortality {
             self = .mortal(
                 MortalExtrinsic(
                     era: eraParameters.extrinsicEra,
-                    blockNumber: eraParameters.blockNumber,
-                    blockHash: blockHash
+                    anchorBlock: BlockNumberWithHash(
+                        blockNumber: eraParameters.blockNumber,
+                        blockHash: blockHash
+                    )
                 )
             )
         }
@@ -23,12 +25,10 @@ public enum ExtrinsicMortality {
 
 public struct MortalExtrinsic {
     public let era: Era
-    public let blockNumber: BlockNumber
-    public let blockHash: BlockHashData
+    public let anchorBlock: BlockNumberWithHash
 
-    public init(era: Era, blockNumber: BlockNumber, blockHash: BlockHashData) {
+    public init(era: Era, anchorBlock: BlockNumberWithHash) {
         self.era = era
-        self.blockNumber = blockNumber
-        self.blockHash = blockHash
+        self.anchorBlock = anchorBlock
     }
 }
