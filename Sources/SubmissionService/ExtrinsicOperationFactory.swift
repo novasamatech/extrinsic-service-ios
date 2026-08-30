@@ -72,7 +72,7 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
         extrinsicVersion: Extrinsic.Version,
         customExtensions: [TransactionExtending],
         codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>
-    ) -> CompoundOperationWrapper<[ExtrinsicBuilderProtocol]> {
+    ) -> CompoundOperationWrapper<PartialBuildersModel> {
         let genesisBlockOperation = createBlockHashOperation(connection: engine, for: { 0 })
 
         let eraWrapper = eraOperationFactory.createOperation(from: engine, runtimeService: runtimeRegistry)
@@ -89,16 +89,21 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
             runtimeProvider: runtimeRegistry
         )
 
-        let partialBuildersOperation = ClosureOperation<[ExtrinsicBuilderProtocol]> {
+        let partialBuildersOperation = ClosureOperation<PartialBuildersModel> {
             let codingFactory = try codingFactoryOperation.extractNoCancellableResultData()
             let genesisHash = try genesisBlockOperation.extractNoCancellableResultData()
-            let era = try eraWrapper.targetOperation.extractNoCancellableResultData().extrinsicEra
+            let eraParameters = try eraWrapper.targetOperation.extractNoCancellableResultData()
             let eraBlockHash = try eraBlockOperation.extractNoCancellableResultData()
             let metadataHash = try metadataHashWrapper.targetOperation.extractNoCancellableResultData()
 
+            let mortality = try ExtrinsicMortality(
+                eraParameters: eraParameters,
+                blockHash: Data(hexString: eraBlockHash)
+            )
+
             let runtimeJsonContext = codingFactory.createRuntimeJsonContext()
 
-            return try indexes.map { index in
+            let builders: [ExtrinsicBuilderProtocol] = try indexes.map { index in
                 var builder: ExtrinsicBuilderProtocol = ExtrinsicBuilder(
                     extrinsicVersion: extrinsicVersion,
                     specVersion: codingFactory.specVersion,
@@ -106,7 +111,7 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
                     genesisHash: genesisHash
                 )
                 .with(runtimeJsonContext: runtimeJsonContext)
-                .with(era: era, blockHash: eraBlockHash)
+                .with(era: eraParameters.extrinsicEra, blockHash: eraBlockHash)
 
                 if let metadataHash {
                     builder = builder.with(metadataHash: metadataHash)
@@ -122,6 +127,8 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
                 return try customClosure(builder, index)
             }
+
+            return PartialBuildersModel(builders: builders, mortality: mortality)
         }
 
         let dependencies = [genesisBlockOperation] + eraWrapper.allOperations + [eraBlockOperation] +
@@ -134,11 +141,13 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
     private func createExtrinsicsOperation(
         dependingOn originResultOperation: BaseOperation<ExtrinsicOriginDefinitionResponse>,
-        codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>
+        codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>,
+        partialBuildersOperation: BaseOperation<PartialBuildersModel>
     ) -> BaseOperation<ExtrinsicsCreationResult> {
         ClosureOperation<ExtrinsicsCreationResult> {
             let codingFactory = try codingFactoryOperation.extractNoCancellableResultData()
             let response = try originResultOperation.extractNoCancellableResultData()
+            let mortality = try partialBuildersOperation.extractNoCancellableResultData().mortality
 
             let extrinsics: [Data] = try response.builders.map { builder in
                 try builder.build(
@@ -147,7 +156,11 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
                 )
             }
 
-            return (extrinsics, response.senderResolution)
+            return ExtrinsicsCreationResult(
+                extrinsics: extrinsics,
+                sender: response.senderResolution,
+                mortality: mortality
+            )
         }
     }
 
@@ -173,7 +186,7 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
         let originResolvingWrapper = origin.createOriginResolutionWrapper(
             for: { [feeEstimationRegistry] in
-                let builders = try partialBuildersWrapper.targetOperation.extractNoCancellableResultData()
+                let builders = try partialBuildersWrapper.targetOperation.extractNoCancellableResultData().builders
 
                 return ExtrinsicOriginDefinitionDependency(
                     builders: builders,
@@ -192,11 +205,13 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
         let extrinsicOperation = createExtrinsicsOperation(
             dependingOn: originResolvingWrapper.targetOperation,
-            codingFactoryOperation: codingFactoryOperation
+            codingFactoryOperation: codingFactoryOperation,
+            partialBuildersOperation: partialBuildersWrapper.targetOperation
         )
 
         extrinsicOperation.addDependency(originResolvingWrapper.targetOperation)
         extrinsicOperation.addDependency(codingFactoryOperation)
+        extrinsicOperation.addDependency(partialBuildersWrapper.targetOperation)
 
         return originResolvingWrapper
             .insertingHead(operations: partialBuildersWrapper.allOperations)
