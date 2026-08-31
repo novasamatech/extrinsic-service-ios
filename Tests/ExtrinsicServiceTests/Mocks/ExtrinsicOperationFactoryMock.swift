@@ -70,6 +70,6 @@ final class ExtrinsicOperationFactoryMock: ExtrinsicOperationFactoryProtocol {
 
 extension ExtrinsicBuiltModel {
     static func stub(_ extrinsic: String) -> ExtrinsicBuiltModel {
-        ExtrinsicBuiltModel(extrinsic: extrinsic, sender: .none)
+        ExtrinsicBuiltModel(extrinsic: extrinsic, sender: .none, mortality: .immortal)
     }
 }
