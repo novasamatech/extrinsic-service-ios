@@ -207,7 +207,8 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
             return indexList.map { index in
                 ExtrinsicBuiltModel(
                     extrinsic: result.extrinsics[index].toHex(includePrefix: true),
-                    sender: result.sender
+                    sender: result.sender,
+                    mortality: result.mortality
                 )
             }
         }
@@ -246,7 +247,8 @@ extension BaseExtrinsicOperationFactory: ExtrinsicOperationFactoryProtocol {
             
             let model = ExtrinsicBuiltModel(
                 extrinsic: extrinsic.toHex(includePrefix: true),
-                sender: extrinsicsWithSender.sender
+                sender: extrinsicsWithSender.sender,
+                mortality: extrinsicsWithSender.mortality
             )
             
             return model

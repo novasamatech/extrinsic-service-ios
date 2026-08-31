@@ -97,6 +97,35 @@ public struct ExtrinsicSubscribedStatusModel {
 public struct ExtrinsicBuiltModel {
     public let extrinsic: String
     public let sender: ExtrinsicSenderResolution
+    public let mortality: ExtrinsicMortality
+
+    public var mortalityPeriod: UInt64? {
+        guard
+            case let .mortal(mortalExtrinsic) = mortality,
+            case let .mortal(period, _) = mortalExtrinsic.era else {
+            return nil
+        }
+
+        return period
+    }
+
+    public var mortalityAnchorBlock: BlockNumberWithHash? {
+        guard case let .mortal(mortalExtrinsic) = mortality else {
+            return nil
+        }
+
+        return mortalExtrinsic.anchorBlock
+    }
+
+    public init(
+        extrinsic: String,
+        sender: ExtrinsicSenderResolution,
+        mortality: ExtrinsicMortality
+    ) {
+        self.extrinsic = extrinsic
+        self.sender = sender
+        self.mortality = mortality
+    }
 }
 
 public typealias FeeExtrinsicResult = Result<ExtrinsicFeeProtocol, Error>
@@ -126,6 +155,20 @@ public typealias ExtrinsicSubscriptionIndexedStatusClosure = (Int, Result<Extrin
 public typealias ExtrinsicBuilderClosure = (ExtrinsicBuilderProtocol) throws -> (ExtrinsicBuilderProtocol)
 public typealias ExtrinsicBuilderIndexedClosure = (ExtrinsicBuilderProtocol, Int) throws -> (ExtrinsicBuilderProtocol)
 
-public typealias ExtrinsicsCreationResult = (extrinsics: [Data], sender: ExtrinsicSenderResolution)
+public struct ExtrinsicsCreationResult {
+    public let extrinsics: [Data]
+    public let sender: ExtrinsicSenderResolution
+    public let mortality: ExtrinsicMortality
+
+    public init(
+        extrinsics: [Data],
+        sender: ExtrinsicSenderResolution,
+        mortality: ExtrinsicMortality
+    ) {
+        self.extrinsics = extrinsics
+        self.sender = sender
+        self.mortality = mortality
+    }
+}
 
 public typealias ExtrinsicSubscriptionUpdate = JSONRPCSubscriptionUpdate<RemoteExtrinsicStatus>
