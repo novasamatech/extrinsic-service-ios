@@ -92,6 +92,11 @@ public struct ExtrinsicSubscribedStatusModel {
             sender: sender
         )
     }
+    
+    public init(statusUpdate: ExtrinsicStatusUpdate, sender: ExtrinsicSenderResolution) {
+        self.statusUpdate = statusUpdate
+        self.sender = sender
+    }
 }
 
 public struct ExtrinsicBuiltModel {

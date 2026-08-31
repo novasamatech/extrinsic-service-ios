@@ -5,7 +5,7 @@ public struct ExtrinsicStatusUpdate {
     public let extrinsicHash: String
     public let extrinsicStatus: ExtrinsicStatus
 
-    init(extrinsicHash: String, extrinsicStatus: ExtrinsicStatus) {
+    public init(extrinsicHash: String, extrinsicStatus: ExtrinsicStatus) {
         self.extrinsicHash = extrinsicHash
         self.extrinsicStatus = extrinsicStatus
     }
