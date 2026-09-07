@@ -73,8 +73,6 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
         customExtensions: [TransactionExtending],
         codingFactoryOperation: BaseOperation<RuntimeCoderFactoryProtocol>
     ) -> CompoundOperationWrapper<PartialBuildersModel> {
-        let genesisBlockOperation = createBlockHashOperation(connection: engine, for: { 0 })
-
         let eraWrapper = eraOperationFactory.createOperation(from: engine, runtimeService: runtimeRegistry)
 
         let eraBlockOperation = createBlockHashOperation(connection: engine) {
@@ -91,7 +89,12 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
 
         let partialBuildersOperation = ClosureOperation<PartialBuildersModel> {
             let codingFactory = try codingFactoryOperation.extractNoCancellableResultData()
-            let genesisHash = try genesisBlockOperation.extractNoCancellableResultData()
+            // Genesis hash is sourced from the trusted local chain model rather than the node
+            // (`chain_getBlockHash(0)`): a malicious/compromised/MITM'd node could otherwise return
+            // a different chain's genesis and have the user sign against it. `ChainProtocol.genesisHash`
+            // (substrate-sdk-ios 5.12.0) defaults to `chainId`, so this stays correct for chains where
+            // `chainId` is the genesis hash and honours an explicit genesis for chains where it differs.
+            let genesisHash = chain.genesisHash
             let eraParameters = try eraWrapper.targetOperation.extractNoCancellableResultData()
             let eraBlockHash = try eraBlockOperation.extractNoCancellableResultData()
             let metadataHash = try metadataHashWrapper.targetOperation.extractNoCancellableResultData()
@@ -131,7 +134,7 @@ public final class ExtrinsicOperationFactory: BaseExtrinsicOperationFactory {
             return PartialBuildersModel(builders: builders, mortality: mortality)
         }
 
-        let dependencies = [genesisBlockOperation] + eraWrapper.allOperations + [eraBlockOperation] +
+        let dependencies = eraWrapper.allOperations + [eraBlockOperation] +
             metadataHashWrapper.allOperations
 
         dependencies.forEach { partialBuildersOperation.addDependency($0) }
