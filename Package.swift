@@ -14,10 +14,10 @@ let package = Package(
             ]),
     ],
     dependencies: [
-        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.12.0"),
+        .package(url: "https://github.com/novasamatech/substrate-sdk-ios", exact: "5.13.0"),
         .package(url: "https://github.com/novasamatech/Keystore-iOS", exact: "1.1.0"),
         .package(url: "https://github.com/novasamatech/metadata-shortener-ios", exact: "0.2.1"),
-        .package(url: "https://github.com/novasamatech/logger-ios", exact: "0.0.2")
+        .package(url: "https://github.com/novasamatech/logger-ios", exact: "0.1.0")
     ],
     targets: [
         .target(
